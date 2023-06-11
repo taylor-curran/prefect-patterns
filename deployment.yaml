@@ -1,0 +1,60 @@
+deployments:
+- name: dep-sync-subflows
+  version: null
+  tags: [parent, sync]
+  entrypoint: flows/sync_subflows.py:sync_subflows
+  schedule: null
+  work_pool:
+    name: local-docker
+    work_queue_name: null
+    job_variables: {}
+
+- name: dep-task-wrapped
+  version: null
+  tags: [parent, concurrent, async]
+  entrypoint: flows/sync_subflows.py:sync_subflows
+  schedule: null
+  work_pool:
+    name: local-docker
+    work_queue_name: null
+    job_variables: {}
+
+- name: dep-child-a
+  version: null
+  tags: [child]
+  entrypoint: flows/child_flows.py:child_flow_a
+  schedule: null
+  work_pool:
+    name: local-docker
+    work_queue_name: null
+    job_variables: {}
+
+- name: dep-child-b
+  version: null
+  tags: [child]
+  entrypoint: flows/child_flows.py:child_flow_b
+  schedule: null
+  work_pool:
+    name: local-docker
+    work_queue_name: null
+    job_variables: {}
+
+- name: dep-child-c
+  version: null
+  tags: [child]
+  entrypoint: flows/child_flows.py:child_flow_c
+  schedule: null
+  work_pool:
+    name: local-docker
+    work_queue_name: null
+    job_variables: {}
+  
+- name: dep-child-d
+  version: null
+  tags: [child]
+  entrypoint: flows/child_flows.py:child_flow_d
+  schedule: null
+  work_pool:
+    name: local-docker
+    work_queue_name: null
+    job_variables: {}
