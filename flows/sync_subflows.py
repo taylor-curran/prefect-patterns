@@ -58,7 +58,7 @@ default_simulated_failure = SimulatedFailure(
 
 
 # prefect deployment build normal_subflows_no_tr.py:normal_subflows_no_tr -n dep-normal-sf-no-tr -t subflows -t normal-sf-no-tr -t parent -a
-@flow(persist_result=True, result_storage=S3Bucket(bucket_path=("result-storage")))
+@flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
 def sync_subflows(sim_failure: SimulatedFailure = default_simulated_failure):
     h = upstream_task_h()
     i = upstream_task_i()

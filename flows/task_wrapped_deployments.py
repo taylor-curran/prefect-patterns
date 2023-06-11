@@ -84,7 +84,11 @@ default_simulated_failure = SimulatedFailure(
 
 
 # prefect deployment build task_wrapped_deployments.py:task_wrapped_deployments -n dep_task_wrapped -t sub-flows -t task-wrapped -t parent -a
-@flow(task_runner=ConcurrentTaskRunner(), persist_result=True, result_storage=S3Bucket(bucket_path=("result-storage")))
+@flow(
+    task_runner=ConcurrentTaskRunner(),
+    persist_result=True,
+    result_storage=S3Bucket.load("result-storage"),
+)
 def task_wrapped_deployments(sim_failure: SimulatedFailure = default_simulated_failure):
     h = upstream_task_h.submit()
     i = upstream_task_i.submit()
