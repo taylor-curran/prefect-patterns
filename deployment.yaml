@@ -2,7 +2,7 @@ definitions:
   work_pool: &common_work_pool
     name: "local-docker"
     job_variables:
-      image: "{{ image }}"
+      image: "{{ image_name }}"
 
 deployments:
 - name: dep-sync-subflows
@@ -19,30 +19,32 @@ deployments:
   schedule: null
   work_pool: *common_work_pool
 
-- name: dep-child-a
-  version: null
-  tags: [child]
-  entrypoint: flows/child_flows.py:child_flow_a
-  schedule: null
-  work_pool: *common_work_pool
+# -- child flows --
 
-- name: dep-child-b
-  version: null
-  tags: [child]
-  entrypoint: flows/child_flows.py:child_flow_b
-  schedule: null
-  work_pool: *common_work_pool
+# - name: dep-child-a
+#   version: null
+#   tags: [child]
+#   entrypoint: flows/child_flows/child_flows.py:child_flow_a
+#   schedule: null
+#   work_pool: *common_work_pool
 
-- name: dep-child-c
-  version: null
-  tags: [child]
-  entrypoint: flows/child_flows.py:child_flow_c
-  schedule: null
-  work_pool: *common_work_pool
+# - name: dep-child-b
+#   version: null
+#   tags: [child]
+#   entrypoint: flows/child_flows/child_flows.py:child_flow_b
+#   schedule: null
+#   work_pool: *common_work_pool
+
+# - name: dep-child-c
+#   version: null
+#   tags: [child]
+#   entrypoint: flows/child_flows/child_flows.py:child_flow_c
+#   schedule: null
+#   work_pool: *common_work_pool
   
-- name: dep-child-d
-  version: null
-  tags: [child]
-  entrypoint: flows/child_flows.py:child_flow_d
-  schedule: null
-  work_pool: *common_work_pool
+# - name: dep-child-d
+#   version: null
+#   tags: [child]
+#   entrypoint: flows/child_flows/child_flows.py:child_flow_d
+#   schedule: null
+#   work_pool: *common_work_pool
