@@ -1,6 +1,6 @@
 from prefect import flow, task
 from prefect_aws.s3 import S3Bucket
-from child_flows.child_flows import child_flow_a, child_flow_b, child_flow_c
+from child_flows import child_flow_a, child_flow_b, child_flow_c
 from pydantic import BaseModel
 
 
