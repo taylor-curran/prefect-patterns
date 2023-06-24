@@ -19,18 +19,18 @@ pull:
     branch: main
 
 definitions:
-  tags: &common_tags
-    - 'prefect-patterns'
-    - 'subflow-patterns'
+  tags:
+  - prefect-patterns
+  - subflow-patterns
 
 # the deployments section allows you to provide configuration for deploying flows
 deployments:
 - name: dep-task-wrapped
-  version: 
-  tags: 
-    - 'prefect-patterns'
-    - 'subflow-patterns'
-    - 'child'
+  version:
+  tags:
+  - prefect-patterns
+  - subflow-patterns
+  - parent
   description:
   entrypoint: flows/subflow-patterns/task_wrapped_deployments.py:task_wrapped_deployments
   parameters: {}
@@ -41,7 +41,10 @@ deployments:
   schedule:
 - name: dep-sync-subflows
   version:
-  tags: []
+  tags:
+  - prefect-patterns
+  - subflow-patterns
+  - parent
   description:
   entrypoint: flows/subflow-patterns/sync_subflows.py:sync_subflows
   parameters: {}
@@ -52,7 +55,10 @@ deployments:
   schedule:
 - name: dep-child-a
   version:
-  tags: []
+  tags:
+  - prefect-patterns
+  - subflow-patterns
+  - child
   description:
   entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_a
   parameters: {}
@@ -63,7 +69,10 @@ deployments:
   schedule:
 - name: dep-child-b
   version:
-  tags: []
+  tags:
+  - prefect-patterns
+  - subflow-patterns
+  - child
   description:
   entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_b
   parameters: {}
@@ -74,7 +83,10 @@ deployments:
   schedule:
 - name: dep-child-c
   version:
-  tags: []
+  tags:
+  - prefect-patterns
+  - subflow-patterns
+  - child
   description:
   entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_c
   parameters: {}
@@ -85,9 +97,26 @@ deployments:
   schedule:
 - name: dep-child-d
   version:
-  tags: []
+  tags:
+  - prefect-patterns
+  - subflow-patterns
+  - child
   description:
   entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_d
+  parameters: {}
+  work_pool:
+    name: my-process-flow
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: dep-asyncio-gather-sf
+  version:
+  tags:
+  - prefect-patterns
+  - subflow-patterns
+  - parent
+  description:
+  entrypoint: flows/subflow-patterns/asyncio_gather_subflows.py:asyncio_gather_sub_flows
   parameters: {}
   work_pool:
     name: my-process-flow

@@ -5,67 +5,6 @@ from prefect_aws.s3 import S3Bucket
 import asyncio
 
 
-@task
-async def task_f():
-    print("task f")
-    return {"f": "task f"}
-
-
-@task
-async def task_m():
-    print("task m")
-    return {"m": "task m"}
-
-
-@task
-async def task_n(m):
-    print(m)
-    print("task n")
-    return {"n": "task n"}
-
-
-@task
-async def task_o():
-    print("task o")
-    return {"o": "task o"}
-
-
-@flow(persist_result=True)
-async def child_flow_a(i, sim_failure_child_flow_a):
-    print(f"i: {i}")
-    if sim_failure_child_flow_a:
-        raise Exception("This is a test exception")
-    else:
-        return {"a": "child flow a"}
-
-
-@flow(persist_result=True)
-async def child_flow_b(i={"i": "upstream task"}, sim_failure_child_flow_b=False):
-    print(f"i: {i}")
-    if sim_failure_child_flow_b:
-        raise Exception("This is a test exception")
-    else:
-        return {"b": "child flow b"}
-
-
-@flow(persist_result=True)
-async def child_flow_d():
-    o = await task_o()
-    return {"d": "child flow d"}
-
-
-# -- Nested Child Flow --
-@flow(persist_result=True)
-async def child_flow_c():
-    first_round = await asyncio.gather(*[child_flow_d(), task_m()])
-    d, m = first_round
-    n = await task_n(m)
-    return {"c": d, "n": n}
-
-
-# --
-
-
 @task()
 async def upstream_task_h():
     print("upstream task")
@@ -108,22 +47,39 @@ default_simulated_failure = SimulatedFailure(
 
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
-async def asyncio_gather_sub_flows(
+async def async_python_sub_deployments(
     sim_failure: SimulatedFailure = default_simulated_failure,
 ):
     first_round = await asyncio.gather(
-        *[upstream_task_h(), upstream_task_i(), child_flow_c()]
+        *[
+            upstream_task_h(),
+            upstream_task_i(),
+            run_deployment(name="child-flow-c/dep-child-c"),
+        ]
     )
-    h, i, c = first_round
+    h, i, flow_run_c = first_round
+    c = await flow_run_c.state.result().get()
 
     second_round = await asyncio.gather(
         *[
-            child_flow_a(i, sim_failure.child_flow_a),
-            child_flow_b(i, sim_failure.child_flow_b),
+            run_deployment(
+                "child-flow-a/dep-child-a",
+                parameters={
+                    "i": i,
+                    "sim_failure_child_flow_a": sim_failure.child_flow_a,
+                },
+            ),
+            run_deployment(
+                name="child-flow-b/dep-child-b",
+                parameters={
+                    "i": i,
+                    "sim_failure_child_flow_b": sim_failure.child_flow_b,
+                },
+            ),
         ]
     )
 
-    a, b = second_round
+    a, b = [await flow_run.state.result().get() for flow_run in second_round]
 
     third_round = await asyncio.gather(
         *[downstream_task_j(a, c, sim_failure.downstream_task_j), downstream_task_k(b)]
@@ -138,7 +94,7 @@ async def asyncio_gather_sub_flows(
 
 if __name__ == "__main__":
     asyncio.run(
-        asyncio_gather_sub_flows(
+        async_python_sub_deployments(
             sim_failure=SimulatedFailure(
                 child_flow_a=False, child_flow_b=False, downstream_task_j=False
             )
