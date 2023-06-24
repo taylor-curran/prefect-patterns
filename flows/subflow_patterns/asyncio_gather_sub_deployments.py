@@ -47,7 +47,7 @@ default_simulated_failure = SimulatedFailure(
 
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
-async def async_python_sub_deployments(
+async def asyncio_gather_sub_deployments(
     sim_failure: SimulatedFailure = default_simulated_failure,
 ):
     first_round = await asyncio.gather(
@@ -94,7 +94,7 @@ async def async_python_sub_deployments(
 
 if __name__ == "__main__":
     asyncio.run(
-        async_python_sub_deployments(
+        asyncio_gather_sub_deployments(
             sim_failure=SimulatedFailure(
                 child_flow_a=False, child_flow_b=False, downstream_task_j=False
             )

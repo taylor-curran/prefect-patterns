@@ -32,7 +32,7 @@ deployments:
   - subflow-patterns
   - parent
   description:
-  entrypoint: flows/subflow-patterns/task_wrapped_deployments.py:task_wrapped_deployments
+  entrypoint: flows/subflow_patterns/task_wrapped_deployments.py:task_wrapped_deployments
   parameters: {}
   work_pool:
     name: my-process-flow
@@ -46,7 +46,7 @@ deployments:
   - subflow-patterns
   - parent
   description:
-  entrypoint: flows/subflow-patterns/sync_subflows.py:sync_subflows
+  entrypoint: flows/subflow_patterns/sync_subflows.py:sync_subflows
   parameters: {}
   work_pool:
     name: my-process-flow
@@ -60,7 +60,7 @@ deployments:
   - subflow-patterns
   - child
   description:
-  entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_a
+  entrypoint: flows/subflow_patterns/child_flows/child_flows.py:child_flow_a
   parameters: {}
   work_pool:
     name: my-process-flow
@@ -74,7 +74,7 @@ deployments:
   - subflow-patterns
   - child
   description:
-  entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_b
+  entrypoint: flows/subflow_patterns/child_flows/child_flows.py:child_flow_b
   parameters: {}
   work_pool:
     name: my-process-flow
@@ -88,7 +88,7 @@ deployments:
   - subflow-patterns
   - child
   description:
-  entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_c
+  entrypoint: flows/subflow_patterns/child_flows/child_flows.py:child_flow_c
   parameters: {}
   work_pool:
     name: my-process-flow
@@ -102,7 +102,7 @@ deployments:
   - subflow-patterns
   - child
   description:
-  entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_d
+  entrypoint: flows/subflow_patterns/child_flows/child_flows.py:child_flow_d
   parameters: {}
   work_pool:
     name: my-process-flow
@@ -116,7 +116,22 @@ deployments:
   - subflow-patterns
   - parent
   description:
-  entrypoint: flows/subflow-patterns/asyncio_gather_subflows.py:asyncio_gather_sub_flows
+  entrypoint: flows/subflow_patterns/asyncio_gather_subflows.py:asyncio_gather_sub_flows
+  parameters: {}
+  work_pool:
+    name: my-process-flow
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: dep-asyncio-gather-sub-deployments
+  version:
+  tags:
+  - prefect-patterns
+  - subflow-patterns
+  - parent
+  description:
+  entrypoint: 
+    flows/subflow_patterns/asyncio_gather_sub_deployments.py:asyncio_gather_sub_deployments
   parameters: {}
   work_pool:
     name: my-process-flow
