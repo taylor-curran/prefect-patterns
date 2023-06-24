@@ -1,0 +1,96 @@
+# Welcome to your prefect.yaml file! You can you this file for storing and managing
+# configuration for deploying your flows. We recommend committing this file to source
+# control along with your flow code.
+
+# Generic metadata about this project
+name: prefect-patterns
+prefect-version: 2.10.17
+
+# build section allows you to manage and build docker images
+build:
+
+# push section allows you to manage if and how this project is uploaded to remote locations
+push:
+
+# pull section allows you to provide instructions for cloning this project in remote locations
+pull:
+- prefect.deployments.steps.git_clone:
+    repository: https://github.com/taylor-curran/prefect-patterns.git
+    branch: main
+
+definitions:
+  tags: &common_tags
+    - 'prefect-patterns'
+    - 'subflow-patterns'
+
+# the deployments section allows you to provide configuration for deploying flows
+deployments:
+- name: dep-task-wrapped
+  version: 
+  tags: 
+    - 'prefect-patterns'
+    - 'subflow-patterns'
+    - 'child'
+  description:
+  entrypoint: flows/subflow-patterns/task_wrapped_deployments.py:task_wrapped_deployments
+  parameters: {}
+  work_pool:
+    name: my-process-flow
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: dep-sync-subflows
+  version:
+  tags: []
+  description:
+  entrypoint: flows/subflow-patterns/sync_subflows.py:sync_subflows
+  parameters: {}
+  work_pool:
+    name: my-process-flow
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: dep-child-a
+  version:
+  tags: []
+  description:
+  entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_a
+  parameters: {}
+  work_pool:
+    name: my-process-flow
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: dep-child-b
+  version:
+  tags: []
+  description:
+  entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_b
+  parameters: {}
+  work_pool:
+    name: my-process-flow
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: dep-child-c
+  version:
+  tags: []
+  description:
+  entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_c
+  parameters: {}
+  work_pool:
+    name: my-process-flow
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: dep-child-d
+  version:
+  tags: []
+  description:
+  entrypoint: flows/subflow-patterns/child_flows/child_flows.py:child_flow_d
+  parameters: {}
+  work_pool:
+    name: my-process-flow
+    work_queue_name:
+    job_variables: {}
+  schedule:
