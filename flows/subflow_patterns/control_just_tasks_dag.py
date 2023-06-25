@@ -1,12 +1,20 @@
 from prefect import flow, task
 from prefect_aws.s3 import S3Bucket
 from tasks_subflows_models.child_flows import child_flow_a, child_flow_b, child_flow_c
-from tasks_subflows_models.tasks import upstream_task_h, upstream_task_i, mid_subflow_task_f, downstream_task_p, downstream_task_j, downstream_task_k
+from tasks_subflows_models.tasks import (
+    upstream_task_h,
+    upstream_task_i,
+    mid_subflow_task_f,
+    downstream_task_p,
+    downstream_task_j,
+    downstream_task_k,
+)
 from tasks_subflows_models.flow_params import SimulatedFailure
 from tasks_subflows_models.flow_params import SimulatedFailure
 from prefect.task_runners import ConcurrentTaskRunner
 
 # This flow contains only tasks to serve as a control against subflow behavior
+
 
 @task
 def task_a(i, sim_failure_child_flow_a):
@@ -36,7 +44,9 @@ def task_c():
     d = "child_flow_d"
     return {"c": d}
 
+
 # ---
+
 
 @flow(task_runner=ConcurrentTaskRunner(), persist_result=True)
 def just_tasks(sim_failure: SimulatedFailure = SimulatedFailure()):
@@ -45,9 +55,7 @@ def just_tasks(sim_failure: SimulatedFailure = SimulatedFailure()):
     p = downstream_task_p.submit(h)
     a = task_a.submit(i, sim_failure.child_flow_a)
     f = mid_subflow_task_f.submit()
-    b = task_b.submit(
-        sim_failure_child_flow_b=sim_failure.child_flow_b, wait_for=[i]
-    )
+    b = task_b.submit(sim_failure_child_flow_b=sim_failure.child_flow_b, wait_for=[i])
     c = task_c.submit()
     j = downstream_task_j.submit(a, c, sim_failure.downstream_task_j)
     k = downstream_task_k.submit(wait_for=[b])
