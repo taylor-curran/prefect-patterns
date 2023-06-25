@@ -1,64 +1,35 @@
-from prefect import flow, task
-from prefect.deployments import run_deployment
-from pydantic import BaseModel
+from prefect import flow
 from prefect_aws.s3 import S3Bucket
-import asyncio
-
-
-@task()
-async def upstream_task_h():
-    print("upstream task")
-    return {"h": "upstream task"}
-
-
-@task()
-async def upstream_task_i():
-    print("upstream task")
-    return {"i": "upstream task"}
-
-
-@task()
-async def downstream_task_j(a, c, sim_failure_downstream_task_j):
-    if sim_failure_downstream_task_j:
-        raise Exception("This is a test exception")
-    else:
-        print("downstream task")
-        return {"j": "downstream task"}
-
-
-@task()
-async def downstream_task_k(d):
-    print("downstream task")
-    return {"k": "downstream task"}
-
-
-# ---
-
-
-class SimulatedFailure(BaseModel):
-    child_flow_a: bool = False
-    child_flow_b: bool = False
-    downstream_task_j: bool = False
-
-
-default_simulated_failure = SimulatedFailure(
-    child_flow_a=False, child_flow_b=False, downstream_task_j=False
+from tasks_subflows_models.flow_params import SimulatedFailure
+from tasks_subflows_models.child_flows_async import ( # must import from child_flows_async since this flow is async
+    child_flow_a,
+    child_flow_b,
+    child_flow_c,
 )
+from tasks_subflows_models.tasks_async import ( # must import from tasks_async since tasks are awaited
+    upstream_task_h,
+    upstream_task_i,
+    mid_subflow_upstream_task_f,
+    downstream_task_p,
+    downstream_task_j,
+    downstream_task_k,
+)
+import asyncio
+from prefect.deployments import run_deployment
 
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
 async def asyncio_gather_sub_deployments(
-    sim_failure: SimulatedFailure = default_simulated_failure,
+    sim_failure: SimulatedFailure = SimulatedFailure(),
 ):
     first_round = await asyncio.gather(
-        *[
-            upstream_task_h(),
-            upstream_task_i(),
-            run_deployment(name="child-flow-c/dep-child-c"),
-        ]
+        *[upstream_task_h(), upstream_task_i(), run_deployment(name="child-flow-c/dep-child-c")]
     )
-    h, i, flow_run_c = first_round
-    c = await flow_run_c.state.result().get()
+    h, i, c = first_round
+
+    # Its better to run this task with the above gather since it, like nodes h, i, and c, has no dependencies,
+    # But to illustrate how a task can be run without gather, I've left it here
+    f = await mid_subflow_upstream_task_f()
 
     second_round = await asyncio.gather(
         *[
@@ -76,10 +47,11 @@ async def asyncio_gather_sub_deployments(
                     "sim_failure_child_flow_b": sim_failure.child_flow_b,
                 },
             ),
+            downstream_task_p(h),
         ]
     )
 
-    a, b = [await flow_run.state.result().get() for flow_run in second_round]
+    a, b, p = second_round
 
     third_round = await asyncio.gather(
         *[downstream_task_j(a, c, sim_failure.downstream_task_j), downstream_task_k(b)]
