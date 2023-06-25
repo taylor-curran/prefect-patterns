@@ -3,33 +3,35 @@ from prefect_aws.s3 import S3Bucket
 from tasks_subflows_models.child_flows import child_flow_a, child_flow_b, child_flow_c
 from pydantic import BaseModel
 
+# thanks to sync_compatible, these tasks can be defined as async but still run in a synchronous flow
+# the same cannot be said for a task that is not async, it will error out if executed by asyncio.gather()
 
 @task()
-def upstream_task_h():
+async def upstream_task_h():
     print("upstream task")
     return {"h": "upstream task"}
 
 
 @task()
-def upstream_task_i():
+async def upstream_task_i():
     print("upstream task")
     return {"i": "upstream task"}
 
 
 @task()
-def mid_subflow_task_f():
+async def mid_subflow_upstream_task_f():
     print("mid subflow task")
     return {"f": "mid subflow task"}
 
 
 @task()
-def downstream_task_p(h):
+async def downstream_task_p(h):
     print(h)
     return {"p": "downstream task"}
 
 
 @task()
-def downstream_task_j(a):
+async def downstream_task_j(a):
     print("downstream task")
     return {"j": "downstream task"}
 
@@ -44,6 +46,6 @@ async def downstream_task_j(a, c, sim_failure_downstream_task_j):
 
 
 @task()
-def downstream_task_k():
+async def downstream_task_k():
     print("downstream task")
     return {"k": "downstream task"}

@@ -4,7 +4,7 @@ from tasks_subflows_models.child_flows import child_flow_a, child_flow_b, child_
 from tasks_subflows_models.tasks import (
     upstream_task_h,
     upstream_task_i,
-    mid_subflow_task_f,
+    mid_subflow_upstream_task_f,
     downstream_task_p,
     downstream_task_j,
     downstream_task_k,
@@ -18,12 +18,13 @@ from prefect.task_runners import ConcurrentTaskRunner
     persist_result=True,
     result_storage=S3Bucket.load("result-storage"),
 )
-def sync_subflows(sim_failure: SimulatedFailure = SimulatedFailure()):
+def blocking_subflows(sim_failure: SimulatedFailure = SimulatedFailure()):
     h = upstream_task_h.submit()
     i = upstream_task_i.submit()
     p = downstream_task_p.submit(h)
     a = child_flow_a(i, sim_failure.child_flow_a)
-    f = mid_subflow_task_f.submit()
+    # even though task_f has no dependencies it will non the less wait for child_flow_a to finish as normal subflows are blocking
+    f = mid_subflow_upstream_task_f.submit()
     b = child_flow_b(sim_failure_child_flow_b=sim_failure.child_flow_b, wait_for=[i])
     c = child_flow_c()
     j = downstream_task_j.submit(a, c, sim_failure.downstream_task_j)
@@ -33,7 +34,7 @@ def sync_subflows(sim_failure: SimulatedFailure = SimulatedFailure()):
 
 
 if __name__ == "__main__":
-    sync_subflows(
+    blocking_subflows(
         sim_failure=SimulatedFailure(
             child_flow_a=False, child_flow_b=False, downstream_task_j=False
         )

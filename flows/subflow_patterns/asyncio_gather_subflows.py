@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from prefect_aws.s3 import S3Bucket
 import asyncio
 
-
 @task
 async def task_f():
     print("task f")
@@ -67,9 +66,9 @@ async def child_flow_c():
 
 
 @task()
-async def upstream_task_h():
+def upstream_task_h():
     print("upstream task")
-    return {"h": "upstream task"}
+    return 'hi'
 
 
 @task()
