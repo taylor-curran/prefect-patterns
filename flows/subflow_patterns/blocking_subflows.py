@@ -1,4 +1,4 @@
-from prefect import flow, task
+from prefect import flow
 from prefect_aws.s3 import S3Bucket
 from tasks_subflows_models.child_flows import child_flow_a, child_flow_b, child_flow_c
 from tasks_subflows_models.tasks import (
@@ -23,7 +23,7 @@ def blocking_subflows(sim_failure: SimulatedFailure = SimulatedFailure()):
     i = upstream_task_i.submit()
     p = downstream_task_p.submit(h)
     a = child_flow_a(i, sim_failure.child_flow_a)
-    # even though task_f has no dependencies it will non the less wait for child_flow_a to finish as normal subflows are blocking
+    # even though task_f has no dependencies it will still wait for child_flow_a to finish as subflow_a is blocking
     f = mid_subflow_upstream_task_f.submit()
     b = child_flow_b(sim_failure_child_flow_b=sim_failure.child_flow_b, wait_for=[i])
     c = child_flow_c()

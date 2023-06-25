@@ -1,12 +1,10 @@
 from prefect import flow, task
 from prefect_aws.s3 import S3Bucket
 
-# If a team will be using only Prefect's TaskRunners for their Concurrent/Asynchronous Execution, they can define their tasks like below.
-# In other words, if a team does not intend to run any subflows or tasks as awaitable coroutines, they should leave their tasks as normal sync functions.
-
 # -- Child Flow Tasks --
 
 
+# These tasks do not need to be async even though they are run inside of async functions because they are submitted to the task runner.
 @task
 def task_l():
     print("task f")
@@ -36,7 +34,7 @@ def task_o():
 
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
-def child_flow_a(i, sim_failure_child_flow_a):
+async def child_flow_a(i, sim_failure_child_flow_a):
     print(f"i: {i}")
     if sim_failure_child_flow_a:
         raise Exception("This is a test exception")
@@ -45,7 +43,7 @@ def child_flow_a(i, sim_failure_child_flow_a):
 
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
-def child_flow_b(i={"i": "upstream task"}, sim_failure_child_flow_b=False):
+async def child_flow_b(i={"i": "upstream task"}, sim_failure_child_flow_b=False):
     print(f"i: {i}")
     if sim_failure_child_flow_b:
         raise Exception("This is a test exception")
@@ -54,7 +52,7 @@ def child_flow_b(i={"i": "upstream task"}, sim_failure_child_flow_b=False):
 
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
-def child_flow_d():
+async def child_flow_d():
     l = task_l.submit()
     o = task_o.submit()
     return {"d": "child flow d"}
@@ -62,8 +60,8 @@ def child_flow_d():
 
 # -- Nested Child Flow --
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
-def child_flow_c():
-    d = child_flow_d()
+async def child_flow_c():
+    d = await child_flow_d()
     m = task_m.submit()
     n = task_n.submit(m)
     return {"c": m}
