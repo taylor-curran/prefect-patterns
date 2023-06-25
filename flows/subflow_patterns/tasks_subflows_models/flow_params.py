@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class SimulatedFailure(BaseModel):
     child_flow_a: bool = False
     child_flow_b: bool = False

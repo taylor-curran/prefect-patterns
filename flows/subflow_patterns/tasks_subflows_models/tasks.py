@@ -15,10 +15,12 @@ def upstream_task_i():
     print("upstream task")
     return {"i": "upstream task"}
 
+
 @task()
 def mid_subflow_task_f():
     print("mid subflow task")
     return {"f": "mid subflow task"}
+
 
 @task()
 def downstream_task_p(h):

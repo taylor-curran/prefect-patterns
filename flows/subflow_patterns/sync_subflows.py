@@ -1,10 +1,23 @@
 from prefect import flow, task
 from prefect_aws.s3 import S3Bucket
 from tasks_subflows_models.child_flows import child_flow_a, child_flow_b, child_flow_c
-from tasks_subflows_models.tasks import upstream_task_h, upstream_task_i, mid_subflow_task_f, downstream_task_p, downstream_task_j, downstream_task_k
+from tasks_subflows_models.tasks import (
+    upstream_task_h,
+    upstream_task_i,
+    mid_subflow_task_f,
+    downstream_task_p,
+    downstream_task_j,
+    downstream_task_k,
+)
 from tasks_subflows_models.flow_params import SimulatedFailure
+from prefect.task_runners import ConcurrentTaskRunner
 
-@flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
+
+@flow(
+    task_runner=ConcurrentTaskRunner(),
+    persist_result=True,
+    result_storage=S3Bucket.load("result-storage"),
+)
 def sync_subflows(sim_failure: SimulatedFailure = SimulatedFailure()):
     h = upstream_task_h.submit()
     i = upstream_task_i.submit()
