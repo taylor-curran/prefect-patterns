@@ -1,8 +1,12 @@
 from prefect import flow
 from prefect_aws.s3 import S3Bucket
 from tasks_subflows_models.flow_params import SimulatedFailure
-from tasks_subflows_models.child_flows import child_flow_a, child_flow_b, child_flow_c
-from tasks_subflows_models.tasks import (
+from tasks_subflows_models.child_flows_async import ( # must import from child_flows_async since this flow is async
+    child_flow_a,
+    child_flow_b,
+    child_flow_c,
+)
+from tasks_subflows_models.tasks_async import ( # must import from tasks_async since tasks are awaited
     upstream_task_h,
     upstream_task_i,
     mid_subflow_upstream_task_f,

@@ -1,6 +1,6 @@
 from prefect import flow, task
 from prefect_aws.s3 import S3Bucket
-from tasks_subflows_models.tasks_sync import ( # could import from either tasks_async or tasks_sync
+from tasks_subflows_models.tasks_sync import (  # could import from either tasks_async or tasks_sync
     upstream_task_h,
     upstream_task_i,
     mid_subflow_upstream_task_f,

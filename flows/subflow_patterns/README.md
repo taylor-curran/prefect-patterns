@@ -15,3 +15,6 @@ An async task can run just fine in a sync or async fashion, there are just a few
 - Submitting tasks to the task runner is always preferred because the concurrent execution is dependency aware.
 
 The recommendation is, for teams using asyncio, define your tasks with the async modifier so the task can be called in both async and sync contexts. If concurrent execution is desired, submit to the task runner as much as possible, but use asyncio.gather() where its necessary to achieve concurrent execution with subflows and do not mix `.submit()` and `await` code within the same flow.
+
+
+prj/lunchlearn/prefect-patterns
