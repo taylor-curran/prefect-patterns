@@ -1,54 +1,43 @@
-# Example of a Custom Block Type
-import pandas as pd
+import requests
 from prefect.blocks.core import Block
-from prefect_snowflake.database import SnowflakeConnector
-from sqlalchemy import create_engine
+from datetime import datetime
 
-
-class SnowflakePandas(Block):
-
+class GitHubIssues(Block):
     """
-    Interact with a Snowflake schema using Pandas.
-    Requires pandas and snowflake-sqlalchemy packages to be installed.
+    Interact with GitHub's API to get issues of a given repository.
+    Get the most recently commented issue.
 
     Args:
-        snowflake_connector (SnowflakeConnector): Schema and credentials for a Snowflake schema.
+        username (str): The username of the repository's owner.
+        repo (str): The name of the repository.
+        state (str): The state of the issues to return. Can be either 'open', 'closed', or 'all'. Default is 'open'.
 
     Example:
         Load stored block:
         ```python
-        from dataplatform.blocks import SnowflakePandas
-        block = SnowflakePandas.load("BLOCK_NAME")
+        from my_blocks import GitHubIssues
+
+        issues_block = GitHubIssues.load("BLOCK_NAME")
+        issues_block.get_issues()
         ```
-    """  # noqa
+    """
 
-    _block_type_name = "Snowflake Pandas"
-    _logo_url = "https://images.ctfassets.net/gm98wzqotmnx/2DxzAeTM9eHLDcRQx1FR34/f858a501cdff918d398b39365ec2150f/snowflake.png?h=250"  # noqa
-    _block_schema_capabilities = ["load_raw_data", "read_sql"]
-    snowflake_connector: SnowflakeConnector
+    _block_type_name = "GitHub Issues"
+    _block_schema_capabilities = ["get_issues", "get_most_recently_commented_issue"]
+    _logo_url = ""
+    username: str
+    repo: str
+    state: str = 'open'
 
-    def _get_connection_string(self) -> str:
-        acc_id = self.snowflake_connector.credentials.account
-        usr = self.snowflake_connector.credentials.user
-        role = self.snowflake_connector.credentials.role or "SYSADMIN"
-        pwd = self.snowflake_connector.credentials.password.get_secret_value()
-        db = self.snowflake_connector.database
-        schema = self.snowflake_connector.schema_
-        warehouse = self.snowflake_connector.warehouse
-        return f"snowflake://{usr}:{pwd}@{acc_id}/{db}/{schema}?warehouse={warehouse}&role={role}"
+    def get_issues(self) -> list:
+        url = f"https://api.github.com/repos/{self.username}/{self.repo}/issues?state={self.state}"
+        response = requests.get(url)
+        response.raise_for_status()  # Will raise an exception if the status code is not 200
+        return response.json()
+    
+    def get_most_recently_commented_issue(self) -> dict:
+        issues = self.get_issues()
+        most_recent_issue = max(issues, key=lambda issue: datetime.fromisoformat(issue['updated_at'].rstrip("Z")))
+        return most_recent_issue
+    
 
-    def read_sql(self, table_or_query: str) -> pd.DataFrame:
-        db = self._get_connection_string()
-        engine = create_engine(db)
-        return pd.read_sql(table_or_query, engine)
-
-    def load_raw_data(self, dataframe: pd.DataFrame, table_name: str) -> None:
-        conn_string = self._get_connection_string()
-        db_engine = create_engine(conn_string)
-        dataframe.to_sql(
-            table_name,
-            schema=self.snowflake_connector.schema_,
-            con=db_engine,
-            if_exists="replace",
-            index=False,
-        )
