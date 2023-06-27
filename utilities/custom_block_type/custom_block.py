@@ -22,12 +22,13 @@ class GitHubIssues(Block):
         ```
     """
 
-    _block_type_name = "GitHub Issues"
-    _block_schema_capabilities = ["get_issues", "get_most_recently_commented_issue"]
-    _logo_url = "https://static.vecteezy.com/system/resources/previews/014/802/399/original/daily-flow-issues-organization-realization-flat-color-icon-icon-banner-template-free-vector.jpg"
     username: str
     repo: str
     state: str = 'open'
+    _block_type_name = "GitHub Issues"
+    _block_schema_capabilities = ["get_issues", "get_most_recently_commented_issue"]
+    _logo_url = "https://static.vecteezy.com/system/resources/previews/014/802/399/original/daily-flow-issues-organization-realization-flat-color-icon-icon-banner-template-free-vector.jpg"
+    
 
     def _construct_url(self) -> str:
         return f"https://api.github.com/repos/{self.username}/{self.repo}/issues?state={self.state}"
