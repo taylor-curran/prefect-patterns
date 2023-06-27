@@ -1,4 +1,4 @@
-from prefect import flow, task
+from custom_decorators_add_sleeps import flow, task
 from prefect_aws.s3 import S3Bucket
 
 # If a team will be using only Prefect's TaskRunners for their Concurrent/Asynchronous Execution, they can define their tasks like below.
@@ -38,6 +38,8 @@ def task_o():
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
 def child_flow_a(i, sim_failure_child_flow_a):
     print(f"i: {i}")
+    m = task_m.submit()
+    o = task_o.submit()
     if sim_failure_child_flow_a:
         raise Exception("This is a test exception")
     else:
@@ -47,9 +49,11 @@ def child_flow_a(i, sim_failure_child_flow_a):
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
 def child_flow_b(i={"i": "upstream task"}, sim_failure_child_flow_b=False):
     print(f"i: {i}")
+    l = task_l.submit()
     if sim_failure_child_flow_b:
         raise Exception("This is a test exception")
     else:
+        o = task_o.submit()
         return {"b": "child flow b"}
 
 
