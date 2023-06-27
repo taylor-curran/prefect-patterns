@@ -25,116 +25,74 @@ definitions:
 
 # the deployments section allows you to provide configuration for deploying flows
 deployments:
-- name: dep-task-wrapped
+- name: a-local-docker
   version:
-  tags:
-  - prefect-patterns
-  - subflow-patterns
-  - parent
-  description:
-  entrypoint: flows/subflow_patterns/task_wrapped_deployments.py:task_wrapped_deployments
-  parameters: {}
-  work_pool:
-    name: my-process-flow
-    work_queue_name:
-    job_variables: {}
-  schedule:
-- name: dep-sync-subflows
-  version:
-  tags:
-  - prefect-patterns
-  - subflow-patterns
-  - parent
-  description:
-  entrypoint: flows/subflow_patterns/sync_subflows.py:sync_subflows
-  parameters: {}
-  work_pool:
-    name: my-process-flow
-    work_queue_name:
-    job_variables: {}
-  schedule:
-- name: dep-child-a
-  version:
-  tags:
-  - prefect-patterns
-  - subflow-patterns
-  - child
-  description:
-  entrypoint: flows/subflow_patterns/child_flows/child_flows.py:child_flow_a
-  parameters: {}
-  work_pool:
-    name: my-process-flow
-    work_queue_name:
-    job_variables: {}
-  schedule:
-- name: dep-child-b
-  version:
-  tags:
-  - prefect-patterns
-  - subflow-patterns
-  - child
-  description:
-  entrypoint: flows/subflow_patterns/child_flows/child_flows.py:child_flow_b
-  parameters: {}
-  work_pool:
-    name: my-process-flow
-    work_queue_name:
-    job_variables: {}
-  schedule:
-- name: dep-child-c
-  version:
-  tags:
-  - prefect-patterns
-  - subflow-patterns
-  - child
-  description:
-  entrypoint: flows/subflow_patterns/child_flows/child_flows.py:child_flow_c
-  parameters: {}
-  work_pool:
-    name: my-process-flow
-    work_queue_name:
-    job_variables: {}
-  schedule:
-- name: dep-child-d
-  version:
-  tags:
-  - prefect-patterns
-  - subflow-patterns
-  - child
-  description:
-  entrypoint: flows/subflow_patterns/child_flows/child_flows.py:child_flow_d
-  parameters: {}
-  work_pool:
-    name: my-process-flow
-    work_queue_name:
-    job_variables: {}
-  schedule:
-- name: dep-asyncio-gather-sf
-  version:
-  tags:
-  - prefect-patterns
-  - subflow-patterns
-  - parent
-  description:
-  entrypoint: flows/subflow_patterns/asyncio_gather_subflows.py:asyncio_gather_sub_flows
-  parameters: {}
-  work_pool:
-    name: my-process-flow
-    work_queue_name:
-    job_variables: {}
-  schedule:
-- name: dep-asyncio-gather-sub-deployments
-  version:
-  tags:
-  - prefect-patterns
-  - subflow-patterns
-  - parent
+  tags: []
   description:
   entrypoint: 
-    flows/subflow_patterns/asyncio_gather_sub_deployments.py:asyncio_gather_sub_deployments
+    flows/composite_flow_patterns/tasks_subflows_models/child_flows_sync.py:child_flow_a
   parameters: {}
   work_pool:
-    name: my-process-flow
+    name: local-docker
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: b-local-docker
+  version:
+  tags: []
+  description:
+  entrypoint: 
+    flows/composite_flow_patterns/tasks_subflows_models/child_flows_sync.py:child_flow_b
+  parameters: {}
+  work_pool:
+    name: local-docker
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: c-local-docker
+  version:
+  tags: []
+  description:
+  entrypoint: 
+    flows/composite_flow_patterns/tasks_subflows_models/child_flows_sync.py:child_flow_c
+  parameters: {}
+  work_pool:
+    name: local-docker
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: d-local-docker
+  version:
+  tags: []
+  description:
+  entrypoint: 
+    flows/composite_flow_patterns/tasks_subflows_models/child_flows_sync.py:child_flow_d
+  parameters: {}
+  work_pool:
+    name: local-docker
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: jtc-local-docker
+  version:
+  tags: []
+  description:
+  entrypoint: 
+    flows/composite_flow_patterns/control_just_tasks_concurrent.py:just_tasks_concurrent
+  parameters: {}
+  work_pool:
+    name: local-docker
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: jts-local-docker
+  version:
+  tags: []
+  description:
+  entrypoint: flows/composite_flow_patterns/control_just_tasks_sync.py:just_tasks_sync
+  parameters: {}
+  work_pool:
+    name: local-docker
     work_queue_name:
     job_variables: {}
   schedule:
