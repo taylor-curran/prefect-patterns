@@ -40,3 +40,20 @@ def flow(__fn=None, **kwargs):
         return CustomFlow(fn=__fn, **kwargs)
     else:
         return functools.partial(flow, **kwargs)
+
+if __name__ == "__main__":
+
+    @task
+    def foo():
+        print("foo")
+
+    @task
+    def bar():
+        print("bar")
+
+    @flow
+    def my_flow():
+        foo()
+        bar()
+
+    my_flow(sleep_time=8)
