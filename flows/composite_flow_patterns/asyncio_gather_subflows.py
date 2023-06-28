@@ -1,12 +1,13 @@
 from prefect import flow
+import time
 from prefect_aws.s3 import S3Bucket
 from tasks_subflows_models.flow_params import SimulatedFailure
-from tasks_subflows_models.child_flows_async import ( # must import from child_flows_async since this flow is async
+from tasks_subflows_models.child_flows_async import (  # must import from child_flows_async since this flow is async
     child_flow_a,
     child_flow_b,
     child_flow_c,
 )
-from tasks_subflows_models.tasks_async import ( # must import from tasks_async since tasks are awaited
+from tasks_subflows_models.tasks_async import (  # must import from tasks_async since tasks are awaited
     upstream_task_h,
     upstream_task_i,
     mid_subflow_upstream_task_f,
@@ -19,7 +20,7 @@ import asyncio
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
 async def asyncio_gather_sub_flows(
-    sim_failure: SimulatedFailure = SimulatedFailure(),
+    sim_failure: SimulatedFailure = SimulatedFailure(), sleep_time_subflows=0
 ):
     first_round = await asyncio.gather(
         *[upstream_task_h(), upstream_task_i(), child_flow_c()]
@@ -32,8 +33,8 @@ async def asyncio_gather_sub_flows(
 
     second_round = await asyncio.gather(
         *[
-            child_flow_a(i, sim_failure.child_flow_a),
-            child_flow_b(i, sim_failure.child_flow_b),
+            child_flow_a(i, sim_failure.child_flow_a, sleep_time=sleep_time_subflows),
+            child_flow_b(i, sim_failure.child_flow_b, sleep_time=sleep_time_subflows),
             downstream_task_p(h),
         ]
     )
@@ -45,6 +46,7 @@ async def asyncio_gather_sub_flows(
     )
 
     j, k = third_round
+    time.sleep(sleep_time_subflows)
 
     return {"j": j, "k": k}
 
@@ -56,6 +58,7 @@ if __name__ == "__main__":
         asyncio_gather_sub_flows(
             sim_failure=SimulatedFailure(
                 child_flow_a=False, child_flow_b=False, downstream_task_j=False
-            )
+            ),
+            sleep_time_subflows=5,
         )
     )

@@ -1,7 +1,7 @@
 from prefect import flow
 from prefect_aws.s3 import S3Bucket
 from tasks_subflows_models.flow_params import SimulatedFailure
-from tasks_subflows_models.tasks_async import ( # must import from tasks_async since tasks are awaited
+from tasks_subflows_models.tasks_async import (  # must import from tasks_async since tasks are awaited
     upstream_task_h,
     upstream_task_i,
     mid_subflow_upstream_task_f,
@@ -18,7 +18,11 @@ async def asyncio_gather_sub_deployments(
     sim_failure: SimulatedFailure = SimulatedFailure(),
 ):
     first_round = await asyncio.gather(
-        *[upstream_task_h(), upstream_task_i(), run_deployment(name="child-flow-c/dep-child-c")]
+        *[
+            upstream_task_h(),
+            upstream_task_i(),
+            run_deployment(name="child-flow-c/dep-child-c"),
+        ]
     )
     h, i, c = first_round
 

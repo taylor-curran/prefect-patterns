@@ -12,6 +12,7 @@ from tasks_subflows_models.tasks_sync import (  # could import from either tasks
 from tasks_subflows_models.flow_params import SimulatedFailure
 from prefect.task_runners import ConcurrentTaskRunner
 
+
 @task()
 def wrapper_task_a(i, sim_failure_child_flow_a):
     print("wrapper task")
@@ -40,6 +41,7 @@ def wrapper_task_c():
     print("wrapper task")
     c = run_deployment("child-flow-c/c-local-docker")
     return {"c": c.state.result()}
+
 
 @flow(
     task_runner=ConcurrentTaskRunner(),

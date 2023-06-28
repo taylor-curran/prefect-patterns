@@ -49,7 +49,9 @@ def child_flow_a(i, sim_failure_child_flow_a, sleep_time=0):
 
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
-def child_flow_b(i={"i": "upstream task"}, sim_failure_child_flow_b=False, sleep_time=0):
+def child_flow_b(
+    i={"i": "upstream task"}, sim_failure_child_flow_b=False, sleep_time=0
+):
     print(f"i: {i}")
     l = task_l.submit()
     if sim_failure_child_flow_b:
