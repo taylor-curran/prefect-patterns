@@ -14,11 +14,9 @@ from tasks_subflows_models.tasks_async import (  # must import from tasks_async 
 import asyncio
 from prefect.deployments import run_deployment
 
-# TODO This flow is not working, gather it seems is unable to unpack the results of the subflows
-
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
-async def asyncio_gather_sub_flows(
+async def asyncio_gather_sub_deployments(
     sim_failure: SimulatedFailure = SimulatedFailure(), sleep_time_subflows: int = 0
 ):
     first_round = await asyncio.gather(
@@ -61,7 +59,12 @@ async def asyncio_gather_sub_flows(
     a, b, p = second_round
 
     third_round = await asyncio.gather(
-        *[downstream_task_j(a, c, sim_failure.downstream_task_j), downstream_task_k(b)]
+        *[
+            downstream_task_j(
+                a.state.result(), c.state.result(), sim_failure.downstream_task_j
+            ),
+            downstream_task_k(b.state.result()),
+        ]
     )
 
     j, k = third_round
@@ -74,7 +77,7 @@ async def asyncio_gather_sub_flows(
 
 if __name__ == "__main__":
     asyncio.run(
-        asyncio_gather_sub_flows(
+        asyncio_gather_sub_deployments(
             sim_failure=SimulatedFailure(
                 child_flow_a=False, child_flow_b=False, downstream_task_j=False
             ),

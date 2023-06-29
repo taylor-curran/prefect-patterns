@@ -24,7 +24,7 @@ time.sleep(10)
 
 s3_bucket_result_storage = S3Bucket(
     bucket_name="se-demo-result-storage",
-    aws_credentials=AwsCredentials.load("my-aws-creds")
+    aws_credentials=AwsCredentials.load("my-aws-creds"),
 )
 s3_bucket_result_storage.save("result-storage", overwrite=True)
 
