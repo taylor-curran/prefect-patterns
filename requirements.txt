@@ -2,4 +2,3 @@ prefect
 prefect-aws
 prefect-docker
 prefect-github
-prefect-dbt

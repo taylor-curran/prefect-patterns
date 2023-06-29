@@ -122,7 +122,8 @@ deployments:
   work_pool:
     name: local-docker
     work_queue_name:
-    job_variables: {}
+    job_variables:
+      image: '{{ image }}'
   schedule:
 - name: agsf-local-docker
   version:
@@ -134,5 +135,6 @@ deployments:
   work_pool:
     name: local-docker
     work_queue_name:
-    job_variables: {}
+    job_variables:
+      image: '{{ image }}'
   schedule:

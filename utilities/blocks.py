@@ -26,3 +26,5 @@ s3_bucket_result_storage = S3Bucket(
     basepath="development",
 )
 s3_bucket_result_storage.save("result-storage", overwrite=True)
+
+print("Blocks Updated!")
