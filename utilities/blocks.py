@@ -4,6 +4,7 @@ from prefect.blocks.notifications import SlackWebhook
 
 from dotenv import load_dotenv
 import os
+import time
 
 # -- env vars --
 load_dotenv()
@@ -19,9 +20,11 @@ aws_creds = AwsCredentials(
 
 aws_creds.save("my-aws-creds", overwrite=True)
 
+time.sleep(10)
+
 s3_bucket_result_storage = S3Bucket(
     bucket_name="se-demo-result-storage",
-    aws_credentials=aws_creds
+    aws_credentials=AwsCredentials.load("my-aws-creds")
 )
 s3_bucket_result_storage.save("result-storage", overwrite=True)
 
