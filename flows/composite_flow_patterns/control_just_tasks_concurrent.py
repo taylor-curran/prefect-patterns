@@ -37,7 +37,7 @@ def task_b(i={"i": "upstream task"}, sim_failure_child_flow_b=False):
 
 @task
 def task_c():
-    time.sleep
+    time.sleep(3)
     d = "child_flow_d"
     return {"c": d}
 
