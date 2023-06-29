@@ -14,7 +14,8 @@ from tasks_subflows_models.tasks_async import (  # must import from tasks_async 
 import asyncio
 from prefect.deployments import run_deployment
 
-#TODO This flow is not working, gather it seems is unable to unpack the results of the subflows
+# TODO This flow is not working, gather it seems is unable to unpack the results of the subflows
+
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
 async def asyncio_gather_sub_flows(
@@ -52,7 +53,7 @@ async def asyncio_gather_sub_flows(
                     "sim_failure_child_flow_b": sim_failure.child_flow_b,
                     "sleep_time": sleep_time_subflows,
                 },
-            ), # I don't believe fire and forget is possible with asyncio since the result is unpacked
+            ),  # I don't believe fire and forget is possible with asyncio since the result is unpacked
             downstream_task_p(h),
         ]
     )
