@@ -66,3 +66,10 @@ pull:
 ```bash
 prefect deploy --all
 ```
+
+### Start Worker
+1. Ensure you have a docker damon running.
+2. Open up a new terminal and start your docker typed worker:
+```bash
+prefect worker start --pool local-docker
+```
