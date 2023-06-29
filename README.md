@@ -17,7 +17,7 @@ conda activate prfp
 
 ```bash
 pip install -U prefect 
-pip install prefect-aws prefect-docker prefect-github
+pip install prefect-aws prefect-docker prefect-github python-dotenv
 ```
 
 ### Authenticate to Prefect Cloud and Set Workspace
@@ -26,6 +26,13 @@ prefect cloud login
 prefect cloud workspace set
 ```
 
+### Set Up AWS Creds and Blocks
+1. Add a `.env` file with the following variables:
+    ```bash
+    AWS_ACCESS_KEY_ID=add-your-key-id
+    AWS_SECRET_ACCESS_KEY=add-your-secret-access-key
+    ```
+2. Create an S3 Bucket with name `se-demo-result-storage`.
 ### Create Blocks
 ```bash
 python utilities/blocks.py
