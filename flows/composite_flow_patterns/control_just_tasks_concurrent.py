@@ -18,6 +18,7 @@ import time
 @task
 def task_a(i, sim_failure_child_flow_a):
     print(f"i: {i}")
+    time.sleep(3)
     if sim_failure_child_flow_a:
         raise Exception("This is a test exception")
     else:
@@ -27,6 +28,7 @@ def task_a(i, sim_failure_child_flow_a):
 @task
 def task_b(i={"i": "upstream task"}, sim_failure_child_flow_b=False):
     print(f"i: {i}")
+    time.sleep(3)
     if sim_failure_child_flow_b:
         raise Exception("This is a test exception")
     else:
@@ -35,6 +37,7 @@ def task_b(i={"i": "upstream task"}, sim_failure_child_flow_b=False):
 
 @task
 def task_c():
+    time.sleep
     d = "child_flow_d"
     return {"c": d}
 

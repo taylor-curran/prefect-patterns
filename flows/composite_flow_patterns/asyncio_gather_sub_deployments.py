@@ -51,7 +51,7 @@ async def asyncio_gather_sub_deployments(
                     "sim_failure_child_flow_b": sim_failure.child_flow_b,
                     "sleep_time": sleep_time_subflows,
                 },
-            ),  # I don't believe fire and forget is possible with asyncio since the result is unpacked
+            ),
             downstream_task_p(h),
         ]
     )
