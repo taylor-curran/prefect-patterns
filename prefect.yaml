@@ -15,7 +15,7 @@ build:
 - prefect_docker.deployments.steps.build_docker_image:
     requires: prefect-docker>=0.3.0
     image_name: taycurran/test-projects-june11
-    tag: "{{ get-commit-hash.stdout }}"
+    tag: '{{ get-commit-hash.stdout }}'
     dockerfile: auto
     push: true
 
@@ -46,7 +46,7 @@ deployments:
     name: local-docker
     work_queue_name:
     job_variables:
-      image: "{{ image }}"
+      image: '{{ image }}'
   schedule:
 - name: b-local-docker
   version:
@@ -59,7 +59,7 @@ deployments:
     name: local-docker
     work_queue_name:
     job_variables:
-      image: "{{ image }}"
+      image: '{{ image }}'
   schedule:
 - name: c-local-docker
   version:
@@ -72,7 +72,7 @@ deployments:
     name: local-docker
     work_queue_name:
     job_variables:
-      image: "{{ image }}"
+      image: '{{ image }}'
   schedule:
 - name: d-local-docker
   version:
@@ -85,7 +85,7 @@ deployments:
     name: local-docker
     work_queue_name:
     job_variables:
-      image: "{{ image }}"
+      image: '{{ image }}'
   schedule:
 - name: jtc-local-docker
   version:
@@ -98,7 +98,7 @@ deployments:
     name: local-docker
     work_queue_name:
     job_variables:
-      image: "{{ image }}"
+      image: '{{ image }}'
   schedule:
 - name: jts-local-docker
   version:
@@ -110,5 +110,29 @@ deployments:
     name: local-docker
     work_queue_name:
     job_variables:
-      image: "{{ image }}"
+      image: '{{ image }}'
+  schedule:
+- name: twd-local-docker
+  version:
+  tags: []
+  description:
+  entrypoint: 
+    flows/composite_flow_patterns/task_wrapped_deployments.py:task_wrapped_deployments
+  parameters: {}
+  work_pool:
+    name: local-docker
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: agsf-local-docker
+  version:
+  tags: []
+  description:
+  entrypoint: 
+    flows/composite_flow_patterns/asyncio_gather_subflows.py:asyncio_gather_sub_flows
+  parameters: {}
+  work_pool:
+    name: local-docker
+    work_queue_name:
+    job_variables: {}
   schedule:
