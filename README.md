@@ -36,5 +36,5 @@ python utilities/blocks.py
 prefect deploy --all
 ```
 
-
-
+#### Tip!
+Remember to push any changes you make to the flow code and/or change the pull step accordingly.
