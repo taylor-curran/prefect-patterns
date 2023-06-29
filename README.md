@@ -26,7 +26,7 @@ prefect cloud login
 prefect cloud workspace set
 ```
 
-### Set Up AWS Creds and Blocks
+### Set Up AWS Creds and S3 Bucket
 1. Add a `.env` file with the following variables:
     ```bash
     AWS_ACCESS_KEY_ID=add-your-key-id
@@ -37,6 +37,28 @@ prefect cloud workspace set
 ```bash
 python utilities/blocks.py
 ```
+### Create Local Docker Work Pool
+```bash
+prefect work-pool create local-docker --type docker
+```
+
+### Reconfigure Build and Pull Steps where Necessary
+In the `prefect.yaml` file:
+#### **Build Step:** should point to your image registry.
+build:
+- prefect_docker.deployments.steps.build_docker_image:
+    requires: prefect-docker>=0.3.0
+    image_name: taycurran/test-projects-june11 # CHANGE HERE
+    tag: '{{ get-commit-hash.stdout }}'
+    dockerfile: auto
+    push: true
+
+#### **Pull Step:** If you forked this repo, point to your github URL.
+pull:
+- prefect.deployments.steps.git_clone:
+    repository: https://github.com/taylor-curran/prefect-patterns.git # CHANGE HERE
+    branch: main
+
 
 ### Create Deployments
 ```bash
