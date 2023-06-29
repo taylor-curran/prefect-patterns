@@ -59,6 +59,6 @@ if __name__ == "__main__":
             sim_failure=SimulatedFailure(
                 child_flow_a=False, child_flow_b=False, downstream_task_j=False
             ),
-            sleep_time_subflows=5,
+            sleep_time_subflows=0,
         )
     )
