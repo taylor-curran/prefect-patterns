@@ -19,7 +19,7 @@ from prefect.deployments import run_deployment
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
 async def asyncio_gather_sub_flows(
-    sim_failure: SimulatedFailure = SimulatedFailure(), sleep_time_subflows=0
+    sim_failure: SimulatedFailure = SimulatedFailure(), sleep_time_subflows: int = 0
 ):
     first_round = await asyncio.gather(
         *[

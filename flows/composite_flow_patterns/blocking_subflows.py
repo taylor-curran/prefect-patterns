@@ -24,7 +24,7 @@ from prefect.task_runners import ConcurrentTaskRunner
     result_storage=S3Bucket.load("result-storage"),
 )
 def blocking_subflows(
-    sim_failure: SimulatedFailure = SimulatedFailure(), sleep_time_subflows=0
+    sim_failure: SimulatedFailure = SimulatedFailure(), sleep_time_subflows: int = 0
 ):
     h = upstream_task_h.submit()
     i = upstream_task_i.submit()

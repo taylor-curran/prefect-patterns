@@ -37,7 +37,7 @@ definitions:
 deployments:
 - name: a-local-docker
   version:
-  tags: []
+  tags: [child]
   description:
   entrypoint: 
     flows/composite_flow_patterns/tasks_subflows_models/child_flows_sync.py:child_flow_a
@@ -50,7 +50,7 @@ deployments:
   schedule:
 - name: b-local-docker
   version:
-  tags: []
+  tags: [child]
   description:
   entrypoint: 
     flows/composite_flow_patterns/tasks_subflows_models/child_flows_sync.py:child_flow_b
@@ -63,7 +63,7 @@ deployments:
   schedule:
 - name: c-local-docker
   version:
-  tags: []
+  tags: [child]
   description:
   entrypoint: 
     flows/composite_flow_patterns/tasks_subflows_models/child_flows_sync.py:child_flow_c
@@ -76,7 +76,7 @@ deployments:
   schedule:
 - name: d-local-docker
   version:
-  tags: []
+  tags: [child]
   description:
   entrypoint: 
     flows/composite_flow_patterns/tasks_subflows_models/child_flows_sync.py:child_flow_d
@@ -89,7 +89,7 @@ deployments:
   schedule:
 - name: jtc-local-docker
   version:
-  tags: []
+  tags: [parent]
   description:
   entrypoint: 
     flows/composite_flow_patterns/control_just_tasks_concurrent.py:just_tasks_concurrent
@@ -102,7 +102,7 @@ deployments:
   schedule:
 - name: jts-local-docker
   version:
-  tags: []
+  tags: [parent]
   description:
   entrypoint: flows/composite_flow_patterns/control_just_tasks_sync.py:just_tasks_sync
   parameters: {}
@@ -114,7 +114,7 @@ deployments:
   schedule:
 - name: twd-local-docker
   version:
-  tags: []
+  tags: [parent]
   description:
   entrypoint: 
     flows/composite_flow_patterns/task_wrapped_deployments.py:task_wrapped_deployments
@@ -126,7 +126,7 @@ deployments:
   schedule:
 - name: agsf-local-docker
   version:
-  tags: []
+  tags: [parent]
   description:
   entrypoint: 
     flows/composite_flow_patterns/asyncio_gather_subflows.py:asyncio_gather_sub_flows

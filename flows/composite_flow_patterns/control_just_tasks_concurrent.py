@@ -10,6 +10,7 @@ from tasks_subflows_models.tasks_sync import (  # could import from either tasks
 )
 from tasks_subflows_models.flow_params import SimulatedFailure
 from prefect.task_runners import ConcurrentTaskRunner
+import time
 
 # This flow contains only tasks to serve as a control against subflow behavior
 
@@ -33,11 +34,6 @@ def task_b(i={"i": "upstream task"}, sim_failure_child_flow_b=False):
 
 
 @task
-def task_d():
-    return {"d": "child flow d"}
-
-
-@task
 def task_c():
     d = "child_flow_d"
     return {"c": d}
@@ -51,7 +47,9 @@ def task_c():
     persist_result=True,
     result_storage=S3Bucket.load("result-storage"),
 )
-def just_tasks_concurrent(sim_failure: SimulatedFailure = SimulatedFailure()):
+def just_tasks_concurrent(
+    sim_failure: SimulatedFailure = SimulatedFailure(), sleep_time_subflows: int = 0
+):
     h = upstream_task_h.submit()
     i = upstream_task_i.submit()
     p = downstream_task_p.submit(h)
@@ -61,6 +59,7 @@ def just_tasks_concurrent(sim_failure: SimulatedFailure = SimulatedFailure()):
     c = task_c.submit()
     j = downstream_task_j.submit(a, c, sim_failure.downstream_task_j)
     k = downstream_task_k.submit(wait_for=[b])
+    time.sleep(sleep_time_subflows)
 
     return {"j": j, "k": k}
 

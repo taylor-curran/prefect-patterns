@@ -59,7 +59,7 @@ def wrapper_task_c(sleep_time=0):
     result_storage=S3Bucket.load("result-storage"),
 )
 def task_wrapped_deployments(
-    sim_failure: SimulatedFailure = SimulatedFailure(), sleep_time_subflows=0
+    sim_failure: SimulatedFailure = SimulatedFailure(), sleep_time_subflows: int = 0
 ):
     h = upstream_task_h.submit()
     i = upstream_task_i.submit()

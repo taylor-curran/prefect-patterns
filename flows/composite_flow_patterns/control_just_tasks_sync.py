@@ -9,6 +9,7 @@ from tasks_subflows_models.tasks_sync import (  # could import from either tasks
     downstream_task_k,
 )
 from tasks_subflows_models.flow_params import SimulatedFailure
+import time
 
 # This flow contains only tasks to serve as a control against subflow behavior
 
@@ -32,11 +33,6 @@ def task_b(i={"i": "upstream task"}, sim_failure_child_flow_b=False):
 
 
 @task
-def task_d():
-    return {"d": "child flow d"}
-
-
-@task
 def task_c():
     d = "child_flow_d"
     return {"c": d}
@@ -46,7 +42,9 @@ def task_c():
 
 
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
-def just_tasks_sync(sim_failure: SimulatedFailure = SimulatedFailure()):
+def just_tasks_sync(
+    sim_failure: SimulatedFailure = SimulatedFailure(), sleep_time_subflows: int = 0
+):
     h = upstream_task_h()
     i = upstream_task_i()
     p = downstream_task_p(h)
@@ -56,6 +54,7 @@ def just_tasks_sync(sim_failure: SimulatedFailure = SimulatedFailure()):
     c = task_c()
     j = downstream_task_j(a, c, sim_failure.downstream_task_j)
     k = downstream_task_k(wait_for=[b])
+    time.sleep(sleep_time_subflows)
 
     return {"j": j, "k": k}
 
