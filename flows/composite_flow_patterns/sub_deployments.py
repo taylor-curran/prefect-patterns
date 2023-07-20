@@ -29,19 +29,23 @@ from prefect.deployments import run_deployment
     result_storage=S3Bucket.load("result-storage"),
 )
 def sub_deployments(
-    sim_failure: SimulatedFailure = SimulatedFailure(), 
+    sim_failure: SimulatedFailure = None, 
     sleep_time_subflows: int = 0
 ):
-    """description"""
+    """
+    description
+    """
+    if not sim_failure:
+        sim_failure = SimulatedFailure()
     h = upstream_task_h.submit()
     i = upstream_task_i.submit()
     p = downstream_task_p.submit(h)
     a = run_deployment(
         "child-flow-a/a-local-docker",
         parameters={
-            "i": i,
-            "sim_failure_child_flow_a": str(sim_failure.child_flow_a),
-            "sleep_time": str(sleep_time_subflows),
+            "i": i.result(),
+            "sim_failure_child_flow_a": sim_failure.child_flow_a,
+            "sleep_time": sleep_time_subflows,
         },
     )
     # even though task_f has no dependencies it will still wait for child_flow_a to finish as subflow_a is blocking
@@ -49,12 +53,12 @@ def sub_deployments(
     b = run_deployment(
         name="child-flow-b/b-local-docker",
         parameters={
-            "sim_failure_child_flow_b": str(sim_failure.child_flow_b),
-            "sleep_time": str(sleep_time_subflows),
+            "sim_failure_child_flow_b": sim_failure.child_flow_b,
+            "sleep_time": sleep_time_subflows,
         },
     )
     c = run_deployment(
-        name="child-flow-c/c-local-docker", parameters={"sleep_time": str(sleep_time_subflows)}
+        name="child-flow-c/c-local-docker", parameters={"sleep_time": sleep_time_subflows}
     )
     j = downstream_task_j.submit(a.state.result(), c.state.result(), sim_failure.downstream_task_j)
     k = downstream_task_k.submit(b.state.result())
