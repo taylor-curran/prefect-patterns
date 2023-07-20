@@ -38,9 +38,31 @@ definitions:
 
 # the deployments section allows you to provide configuration for deploying flows
 deployments:
+- name: base-deployment
+  version:
+  tags:
+  - '{{ get-commit-hash.stdout }}'
+  description:
+  entrypoint: 
+    flows/composite_flow_patterns/tasks_subflows_models/child_flows_sync.py:child_flow_a
+  parameters: {}
+  work_pool: *local_docker
+  schedule:
+  build:
+  - prefect.deployments.steps.run_shell_script:
+      id: get-commit-hash
+      script: git rev-parse --short HEAD
+      stream_output: false
+  - prefect_docker.deployments.steps.build_docker_image:
+      requires: prefect-docker>=0.3.0
+      image_name: taycurran/test-projects-june11
+      tag: '{{ get-commit-hash.stdout }}'
+      dockerfile: auto
+      push: true
 - name: a-local-docker
   version:
   tags:
+  - docker
   - child
   - '{{ get-commit-hash.stdout }}'
   description:
@@ -49,9 +71,11 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+  build: null
 - name: b-local-docker
   version:
   tags:
+  - docker
   - child
   - '{{ get-commit-hash.stdout }}'
   description:
@@ -60,9 +84,11 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+  build: null
 - name: c-local-docker
   version:
   tags:
+  - docker
   - child
   - '{{ get-commit-hash.stdout }}'
   description:
@@ -71,9 +97,11 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+  build: null
 - name: d-local-docker
   version:
   tags:
+  - docker
   - child
   - '{{ get-commit-hash.stdout }}'
   description:
@@ -82,9 +110,11 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+  build: null
 - name: jtc-local-docker
   version:
   tags:
+  - docker
   - parent
   - just-tasks
   - '{{ get-commit-hash.stdout }}'
@@ -94,9 +124,11 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+  build: null
 - name: jts-local-docker
   version:
   tags:
+  - docker
   - parent
   - just-tasks
   - '{{ get-commit-hash.stdout }}'
@@ -105,9 +137,11 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+  build: null
 - name: twd-local-docker
   version:
   tags:
+  - docker
   - parent
   - task-wrapped-deployments
   - '{{ get-commit-hash.stdout }}'
@@ -117,9 +151,11 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+  build: null
 - name: agsf-local-docker
   version:
   tags:
+  - docker
   - parent
   - asyncio-gather
   - '{{ get-commit-hash.stdout }}'
@@ -129,9 +165,11 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+  build: null
 - name: bsf-local-docker
   version:
   tags:
+  - docker
   - parent
   - blocking-subflows
   - '{{ get-commit-hash.stdout }}'
@@ -140,9 +178,11 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+  build: null
 - name: agsd-local-docker
   version:
   tags:
+  - docker
   - parent
   - asyncio-gather
   - sub-deployments
@@ -153,9 +193,11 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+  build: null
 - name: sd-local-docker
   version:
   tags:
+  - docker
   - parent
   - sub-deployments
   - '{{ get-commit-hash.stdout }}'
@@ -164,3 +206,4 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+  build: null
