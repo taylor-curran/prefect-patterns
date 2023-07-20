@@ -8,7 +8,7 @@ prefect-version: 2.10.17
 
 # build section allows you to manage and build docker images
 build:
-- prefect.projects.steps.run_shell_script:
+- prefect.deployments.steps.run_shell_script:
     id: get-commit-hash
     script: git rev-parse --short HEAD
     stream_output: false
@@ -86,6 +86,7 @@ deployments:
   version:
   tags:
   - parent
+  - just-tasks
   - '{{ get-commit-hash.stdout }}'
   description:
   entrypoint: 
@@ -97,6 +98,7 @@ deployments:
   version:
   tags:
   - parent
+  - just-tasks
   - '{{ get-commit-hash.stdout }}'
   description:
   entrypoint: flows/composite_flow_patterns/control_just_tasks_sync.py:just_tasks_sync
@@ -107,6 +109,7 @@ deployments:
   version:
   tags:
   - parent
+  - task-wrapped-deployments
   - '{{ get-commit-hash.stdout }}'
   description:
   entrypoint: 
@@ -118,6 +121,7 @@ deployments:
   version:
   tags:
   - parent
+  - asyncio-gather
   - '{{ get-commit-hash.stdout }}'
   description:
   entrypoint: 
@@ -129,31 +133,34 @@ deployments:
   version:
   tags:
   - parent
+  - blocking-subflows
   - '{{ get-commit-hash.stdout }}'
   description:
   entrypoint: flows/composite_flow_patterns/blocking_subflows.py:blocking_subflows
   parameters: {}
   work_pool: *local_docker
+  schedule:
 - name: agsd-local-docker
   version:
   tags:
   - parent
+  - asyncio-gather
+  - sub-deployments
   - '{{ get-commit-hash.stdout }}'
   description:
   entrypoint: 
     flows/composite_flow_patterns/asyncio_gather_sub_deployments.py:asyncio_gather_sub_deployments
   parameters: {}
   work_pool: *local_docker
+  schedule:
 - name: sd-local-docker
   version:
   tags:
   - parent
+  - sub-deployments
   - '{{ get-commit-hash.stdout }}'
   description: description
   entrypoint: flows/composite_flow_patterns/sub_deployments.py:sub_deployments
   parameters: {}
-  work_pool:
-    name: local-docker
-    work_queue_name:
-    job_variables: {}
+  work_pool: *local_docker
   schedule:
