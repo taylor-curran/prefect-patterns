@@ -18,11 +18,6 @@ from tasks_subflows_models.flow_params import SimulatedFailure
 from prefect.task_runners import ConcurrentTaskRunner
 from prefect.deployments import run_deployment
 
-# TODO: Get this to work
-# TODO: Test blue green for as -  can you kill a worker and still have the jobs complete
-    # Test with ECS fargate or k8s
-# TODO: Build deployment for sub_deployments
-
 @flow(
     task_runner=ConcurrentTaskRunner(),
     persist_result=True,

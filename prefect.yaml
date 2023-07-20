@@ -144,3 +144,16 @@ deployments:
     flows/composite_flow_patterns/asyncio_gather_sub_deployments.py:asyncio_gather_sub_deployments
   parameters: {}
   work_pool: *local_docker
+- name: sd-local-docker
+  version:
+  tags:
+  - parent
+  - '{{ get-commit-hash.stdout }}'
+  description: description
+  entrypoint: flows/composite_flow_patterns/sub_deployments.py:sub_deployments
+  parameters: {}
+  work_pool:
+    name: local-docker
+    work_queue_name:
+    job_variables: {}
+  schedule:
