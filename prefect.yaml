@@ -175,15 +175,3 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
-- name: temp-qa
-  version:
-  tags: []
-  description:
-  entrypoint: qa_temp.py:pause_flow
-  parameters: {}
-  work_pool:
-    name: local-docker
-    work_queue_name:
-    job_variables: {}
-  schedule:
-
