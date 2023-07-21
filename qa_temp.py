@@ -10,7 +10,7 @@ def pause_sometimes(pause):
 
 @flow(log_prints=True) 
 def pause_flow():
-    pause_sometimes()
+    pause_sometimes(True)
     return 42
 
 if __name__ == "__main__":
