@@ -1,0 +1,5 @@
+vpc-0176a93c6464344f9 / prefect-se-sbx
+
+"awsvpcConfiguration={subnets=[subnet-001a104146337d6be, subnet-01a7a00f7cf3db089, subnet-071e7e9b0b8c708a0, subnet-02ba0261fadf70414],securityGroups=[vpc-0176a93c6464344f9]}"
+
+"arn:aws:ecs:us-east-2:455346737763:task-definition/prefect-worker-task:5"
