@@ -15,22 +15,6 @@
           "type": "string"
         }
       },
-      "security_group": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        },
-        "title": "Security Groups",
-        "description": "This is an array of security group identifiers. These are used to determine the rules for inbound and outbound traffic to the resource. If no security groups are specified, the default security group for the VPC will be used. Each item in the array should be a valid security group ID."
-      },
-      "subnets": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        },
-        "title": "Subnets",
-        "description": "This field is an array of subnet identifiers. These subnets define the network environment where the resource will reside. Each item in the array should be a valid subnet ID. If this field is not provided, the resource will be placed in the default subnet."
-      },
       "name": {
         "type": "string",
         "title": "Name",
@@ -258,12 +242,6 @@
     "labels": "{{ labels }}",
     "vpc_id": "{{ vpc_id }}",
     "cluster": "{{ cluster }}",
-    "networkConfiguration": {
-      "awsvpcConfiguration": {
-        "securityGroups": "{{ security_group }}",
-        "subnets": "{{ subnets }}"
-      }
-    },
     "command": "{{ command }}",
     "stream_output": "{{ stream_output }}",
     "container_name": "{{ container_name }}",
