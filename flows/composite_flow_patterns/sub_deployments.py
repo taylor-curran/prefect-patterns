@@ -18,15 +18,13 @@ from tasks_subflows_models.flow_params import SimulatedFailure
 from prefect.task_runners import ConcurrentTaskRunner
 from prefect.deployments import run_deployment
 
+
 @flow(
     task_runner=ConcurrentTaskRunner(),
     persist_result=True,
     result_storage=S3Bucket.load("result-storage"),
 )
-def sub_deployments(
-    sim_failure: SimulatedFailure = None, 
-    sleep_time_subflows: int = 0
-):
+def sub_deployments(sim_failure: SimulatedFailure = None, sleep_time_subflows: int = 0):
     """
     description
     """
@@ -53,9 +51,12 @@ def sub_deployments(
         },
     )
     c = run_deployment(
-        name="child-flow-c/c-local-docker", parameters={"sleep_time": sleep_time_subflows}
+        name="child-flow-c/c-local-docker",
+        parameters={"sleep_time": sleep_time_subflows},
     )
-    j = downstream_task_j.submit(a.state.result(), c.state.result(), sim_failure.downstream_task_j)
+    j = downstream_task_j.submit(
+        a.state.result(), c.state.result(), sim_failure.downstream_task_j
+    )
     k = downstream_task_k.submit(b.state.result())
     time.sleep(sleep_time_subflows)
 
@@ -65,9 +66,7 @@ def sub_deployments(
 if __name__ == "__main__":
     sub_deployments(
         sim_failure=SimulatedFailure(
-            child_flow_a=False,
-            child_flow_b=False,
-            downstream_task_j=False
+            child_flow_a=False, child_flow_b=False, downstream_task_j=False
         ),
         sleep_time_subflows=8,
     )

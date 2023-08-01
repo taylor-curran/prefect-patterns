@@ -19,11 +19,12 @@ class SimulatedFailure(BaseModel):
 #     time.sleep(sleep_time/2)
 #     return "task t1"
 
+
 # expensive task - long running - 1 day
 # b1 fails right before it finishes
 @task
 def task_b1(sim_failure, sleep_time):
-    time.sleep(sleep_time/2)
+    time.sleep(sleep_time / 2)
 
     if sim_failure.task_b1:
         raise ValueError("simulated failure of task b1")
@@ -31,6 +32,7 @@ def task_b1(sim_failure, sleep_time):
         print("task b1 finishing")
 
         return "task b1"
+
 
 @flow(
     task_runner=ConcurrentTaskRunner(),
@@ -41,16 +43,19 @@ def flow_b(sim_failure, sleep_time):
     task_b1(sim_failure=sim_failure, sleep_time=sleep_time)
     return "flow b"
 
+
 @task
 def wrapper_task_b(sim_failure, sleep_time):
     print("deploy run flow b")
     b = run_deployment(
-    name="flow-b/b-case-a-local-docker", parameters={
-        "sim_failure": sim_failure,
-        "sleep_time": sleep_time,
-        }
+        name="flow-b/b-case-a-local-docker",
+        parameters={
+            "sim_failure": sim_failure,
+            "sleep_time": sleep_time,
+        },
     )
     return {"b": b.state.result()}
+
 
 # @task
 # def task_t2(b, sim_failure, sleep_time=2):
@@ -90,12 +95,13 @@ def wrapper_task_b(sim_failure, sleep_time):
 #     )
 #     return {"a": a.state.result()}
 
+
 @flow(
     task_runner=ConcurrentTaskRunner(),
     persist_result=True,
     result_storage=S3Bucket.load("result-storage"),
 )
-def parent_flow_cs_a(sim_failure, sleep_time=4):
+def parent_flow_cs_a(sim_failure: SimulatedFailure, sleep_time: int = 4):
     if not sim_failure:
         sim_failure = SimulatedFailure()
     b = wrapper_task_b(sim_failure, sleep_time)
@@ -103,10 +109,10 @@ def parent_flow_cs_a(sim_failure, sleep_time=4):
     # a = wrapper_task_a(t1)
     # t3 = t3(a)
 
+
 if __name__ == "__main__":
     sim_failure = SimulatedFailure(child_a1=False, task_b1=False, task_t1=False)
     sleep_time = 4
-    
+
     # Call flow function
     parent_flow_cs_a(sim_failure, sleep_time=sleep_time)
-

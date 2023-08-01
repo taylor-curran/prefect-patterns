@@ -48,9 +48,7 @@ def blocking_subflows(
 if __name__ == "__main__":
     blocking_subflows(
         sim_failure=SimulatedFailure(
-            child_flow_a=False,
-            child_flow_b=False,
-            downstream_task_j=False
+            child_flow_a=False, child_flow_b=False, downstream_task_j=False
         ),
         sleep_time_subflows=8,
     )

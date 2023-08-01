@@ -240,10 +240,7 @@ deployments:
   description:
   entrypoint: case_studies/a.py:flow_b
   parameters: {}
-  work_pool:
-    name: local-docker
-    work_queue_name:
-    job_variables: {}
+  work_pool: *local_docker
   schedule:
 - name: a-case-a-local-docker
   version:
@@ -256,8 +253,5 @@ deployments:
   description:
   entrypoint: case_studies/a.py:flow_a
   parameters: {}
-  work_pool:
-    name: local-docker
-    work_queue_name:
-    job_variables: {}
+  work_pool: *local_docker
   schedule:

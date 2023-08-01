@@ -35,6 +35,7 @@ def task_o():
 
 # -- Child Flows --
 
+
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
 def child_flow_b_csa(
     i={"i": "upstream task"}, sim_failure_child_flow_b=False, sleep_time=0
@@ -48,6 +49,7 @@ def child_flow_b_csa(
         time.sleep(sleep_time)
         return {"b": "child flow b"}
 
+
 @flow(persist_result=True, result_storage=S3Bucket.load("result-storage"))
 def child_flow_a_csa(i, sim_failure_child_flow_a, sleep_time=0):
     print(f"i: {i}")
@@ -58,5 +60,3 @@ def child_flow_a_csa(i, sim_failure_child_flow_a, sleep_time=0):
         raise Exception("This is a test exception")
     else:
         return {"a": "child flow a"}
-
-
