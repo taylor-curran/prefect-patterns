@@ -16,7 +16,7 @@ build:
     requires: prefect-docker>=0.3.0
     image_name: taycurran/test-projects-june11
     tag: '{{ get-commit-hash.stdout }}'
-    dockerfile: auto
+    dockerfile: Dockerfile.custom
     push: true
 
 # push section allows you to manage if and how this project is uploaded to remote locations
@@ -228,4 +228,36 @@ deployments:
       image: '{{ image }}'
   schedule:
   build: *ecr-build-step
-  pull: 
+  pull:
+- name: b-case-a-local-docker
+  version:
+  tags:
+  - docker
+  - child
+  - case
+  - case-a
+  - '{{ get-commit-hash.stdout }}'
+  description:
+  entrypoint: case_studies/a.py:flow_b
+  parameters: {}
+  work_pool:
+    name: local-docker
+    work_queue_name:
+    job_variables: {}
+  schedule:
+- name: a-case-a-local-docker
+  version:
+  tags:
+  - docker
+  - child
+  - case
+  - case-a
+  - '{{ get-commit-hash.stdout }}'
+  description:
+  entrypoint: case_studies/a.py:flow_a
+  parameters: {}
+  work_pool:
+    name: local-docker
+    work_queue_name:
+    job_variables: {}
+  schedule:

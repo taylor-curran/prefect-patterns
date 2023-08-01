@@ -1,0 +1,95 @@
+from prefect import flow, task
+from prefect.deployments import run_deployment
+import time
+from pydantic import BaseModel
+
+
+class SimulatedFailure(BaseModel):
+    child_a1: bool = False
+    task_b1: bool = False
+    task_t1: bool = False
+
+# default is 4 for sleep time
+
+# @task
+# def task_t1(sim_failure, sleep_time=2):
+#     time.sleep(sleep_time/2)
+#     return "task t1"
+
+# expensive task - long running - 1 day
+# b1 fails right before it finishes
+@task
+def task_b1(sim_failure, sleep_time):
+    time.sleep(sleep_time/2)
+
+    if sim_failure.task_b1:
+        raise ValueError("simulated failure of task b1")
+    else:
+        print("task b1 finishing")
+
+        return "task b1"
+
+@flow
+def flow_b(sim_failure, sleep_time):
+    task_b1(sim_failure=sim_failure, sleep_time=sleep_time)
+    return "flow b"
+
+@task
+def wrapper_task_b(sim_failure, sleep_time):
+    print("deploy run flow b")
+    b = run_deployment(
+    name="flow_b/b-case-a-local-docker", parameters={
+        "sim_failure_child_flow_b": sim_failure,
+        "sleep_time": sleep_time,
+        }
+    )
+    return {"b": b.state.result()}
+
+# @task
+# def task_t2(b, sim_failure, sleep_time=2):
+#     print(f"I depend on {b}")
+#     return "task t2"
+
+# @task
+# def task_t3(a):
+#     print(f"I depend on {a}")
+#     return "task t3"
+
+# # first to complete - executes inside flow_a
+# @task
+# def task_a1():
+#     return "task a1"
+
+# # expensive task - long running - 2 days - executes inside flow_a - depends on task a1
+# @task
+# def a2(a1, sim_failure, sleep_time=2):
+#     time.sleep(sleep_time)
+#     print(f"I depend on {a1}")
+#     return "task a2"
+
+# @flow
+# def flow_a(t1):
+#     a1 = a1(t1)
+#     a2 = a2(a1)
+
+# @task
+# def wrapper_task_a(t1):
+#     print("deploy run flow a")
+#     a = run_deployment(
+#         name="flow_a/a-case-a-local-docker", parameters={
+#             "sim_failure_child_flow_b": sim_failure_child_flow_b,
+#             "sleep_time": sleep_time,
+#         }
+#     )
+#     return {"a": a.state.result()}
+
+@flow
+def parent_flow_cs_a():
+    b = wrapper_task_b()
+    # t1 = t1()
+    # a = wrapper_task_a(t1)
+    # t3 = t3(a)
+
+if __name__ == "__main__":
+    parent_flow_cs_a()
+
