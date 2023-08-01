@@ -5,9 +5,10 @@ from pydantic import BaseModel
 
 
 class SimulatedFailure(BaseModel):
-    child_a1: bool = False
+    task_a1: bool = False
     task_b1: bool = False
     task_t1: bool = False
+
 
 # default is 4 for sleep time
 
@@ -84,12 +85,18 @@ def wrapper_task_b(sim_failure, sleep_time):
 #     return {"a": a.state.result()}
 
 @flow
-def parent_flow_cs_a():
-    b = wrapper_task_b()
+def parent_flow_cs_a(sim_failure, sleep_time=4):
+    if not sim_failure:
+        sim_failure = SimulatedFailure()
+    b = wrapper_task_b(sim_failure, sleep_time)
     # t1 = t1()
     # a = wrapper_task_a(t1)
     # t3 = t3(a)
 
 if __name__ == "__main__":
-    parent_flow_cs_a()
+    sim_failure = SimulatedFailure(child_a1=False, task_b1=False, task_t1=False)
+    sleep_time = 4
+    
+    # Call flow function
+    parent_flow_cs_a(sim_failure, sleep_time=sleep_time)
 
