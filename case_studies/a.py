@@ -39,7 +39,7 @@ def task_b1(sim_failure, sleep_time):
     persist_result=True,
     result_storage=S3Bucket.load("result-storage"),
 )
-def flow_b(sim_failure, sleep_time):
+def flow_b(sim_failure: SimulatedFailure, sleep_time):
     task_b1(sim_failure=sim_failure, sleep_time=sleep_time)
     return "flow b"
 
@@ -50,7 +50,7 @@ def wrapper_task_b(sim_failure, sleep_time):
     b = run_deployment(
         name="flow-b/b-case-a-local-docker",
         parameters={
-            "sim_failure": sim_failure,
+            "sim_failure": sim_failure.dict(),
             "sleep_time": sleep_time,
         },
     )
