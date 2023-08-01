@@ -50,7 +50,7 @@ def wrapper_task_b(sim_failure, sleep_time):
     b = run_deployment(
         name="flow-b/b-case-a-local-docker",
         parameters={
-            "sim_failure": sim_failure.dict(),
+            "sim_failure": sim_failure,
             "sleep_time": sleep_time,
         },
     )
