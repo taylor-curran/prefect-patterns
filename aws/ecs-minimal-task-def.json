@@ -1,0 +1,50 @@
+{
+    "family": "ecs-minimal-worker",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "512",
+    "memory": "1024",
+    "executionRoleArn": "arn:aws:iam::455346737763:role/ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::455346737763:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+        "name": "prefect-worker",
+        "image": "455346737763.dkr.ecr.us-east-2.amazonaws.com/prefect-live-july:prefect-2.11-python3.10",
+        "cpu": 512,
+        "memory": 1024,
+        "essential": true,
+        "command": [
+            "prefect",
+            "worker",
+            "start",
+            "--pool",
+            "ecs-minimal",
+            "--type",
+            "ecs"
+        ],
+        "environment": [
+            {
+            "name": "PREFECT_API_URL",
+            "value": "https://api.prefect.cloud/api/accounts/12242a57-9f05-4bf5-8853-9bff595d4bab/workspaces/e8244a0f-b8ed-44c7-8555-856f4c180334"
+            }
+            ],
+        "secrets": [
+            {
+            "name": "PREFECT_API_KEY",
+            "valueFrom": "arn:aws:secretsmanager:us-east-2:455346737763:secret:prefect-live-july-prefect-aws-api-key-IWUoJP"
+              }
+            ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "/ecs/prefect-worker-task",
+                "awslogs-region": "us-east-2",
+                "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ]
+    }
+    

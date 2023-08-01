@@ -35,22 +35,22 @@ definitions:
     name: local-docker
     job_variables:
       image: '{{ image }}'
-  build: &ecs-worker-build-step
-    - prefect.deployments.steps.run_shell_script:
-        id: get-commit-hash
-        script: git rev-parse --short HEAD
-        stream_output: false
-    - prefect.deployments.steps.run_shell_script:
-        id: ecr-auth-step
-        script: aws ecr get-login-password --region us-east-2 | docker login --username
-          AWS --password-stdin 455346737763.dkr.ecr.us-east-2.amazonaws.com
-        stream_output: false
-    - prefect_docker.deployments.steps.build_docker_image:
-        requires: prefect-docker>=0.3.0
-        image_name: 455346737763.dkr.ecr.us-east-2.amazonaws.com/prefect-live-july
-        tag: '{{ get-commit-hash.stdout }}'
-        dockerfile: auto
-        push: true
+  build: &ecr-build-step
+  - prefect.deployments.steps.run_shell_script:
+      id: get-commit-hash
+      script: git rev-parse --short HEAD
+      stream_output: false
+  - prefect.deployments.steps.run_shell_script:
+      id: ecr-auth-step
+      script: aws ecr get-login-password --region us-east-2 | docker login --username
+        AWS --password-stdin 455346737763.dkr.ecr.us-east-2.amazonaws.com
+      stream_output: false
+  - prefect_docker.deployments.steps.build_docker_image:
+      requires: prefect-docker>=0.3.0
+      image_name: 455346737763.dkr.ecr.us-east-2.amazonaws.com/prefect-live-july
+      tag: '{{ get-commit-hash.stdout }}'
+      dockerfile: auto
+      push: true
 
 
 # the deployments section allows you to provide configuration for deploying flows
@@ -208,5 +208,24 @@ deployments:
     job_variables:
       image: '{{ image }}'
   schedule:
-  build: *ecs-worker-build-step
+  build: *ecr-build-step
   pull:
+- name: jtc-push-ecs
+  version:
+  tags:
+  - push
+  - parent
+  - just-tasks
+  - '{{ get-commit-hash.stdout }}'
+  description:
+  entrypoint: 
+    flows/composite_flow_patterns/control_just_tasks_concurrent.py:just_tasks_concurrent
+  parameters: {}
+  work_pool:
+    name: push
+    work_queue_name:
+    job_variables:
+      image: '{{ image }}'
+  schedule:
+  build: *ecr-build-step
+  pull: 

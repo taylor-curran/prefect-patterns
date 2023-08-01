@@ -15,6 +15,22 @@
           "type": "string"
         }
       },
+      "security_groups": {
+        "type": "array",
+        "title": "Security Groups",
+        "description": "A list of security groups to attach to the task run. These security groups will be attached to the ENI that is created for the task. If not provided, the default security group for the VPC will be used.",
+        "items": {
+          "type": "string"
+        }
+      },
+      "subnets": {
+        "type": "array",
+        "title": "Subnets",
+        "description": "A list of subnets to attach to the task run. These subnets will be attached to the ENI that is created for the task. If not provided, the default subnets for the VPC will be used.",
+        "items": {
+          "type": "string"
+        }
+      },
       "name": {
         "type": "string",
         "title": "Name",
@@ -277,6 +293,12 @@
       },
       "launchType": "{{ launch_type }}",
       "taskDefinition": "{{ task_definition_arn }}"
+    },
+    "networkConfiguration": {
+      "awsvpcConfiguration": {
+        "subnets": "{{ subnets }}",
+        "securityGroups": "{{ security_group }}"
+      }
     },
     "cloudwatch_logs_options": "{{ cloudwatch_logs_options }}",
     "task_watch_poll_interval": "{{ task_watch_poll_interval }}",
