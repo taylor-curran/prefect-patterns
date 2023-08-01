@@ -1,5 +1,7 @@
 from prefect import flow, task
+from prefect.task_runners import ConcurrentTaskRunner
 from prefect.deployments import run_deployment
+from prefect_aws.s3 import S3Bucket
 import time
 from pydantic import BaseModel
 
@@ -30,7 +32,11 @@ def task_b1(sim_failure, sleep_time):
 
         return "task b1"
 
-@flow
+@flow(
+    task_runner=ConcurrentTaskRunner(),
+    persist_result=True,
+    result_storage=S3Bucket.load("result-storage"),
+)
 def flow_b(sim_failure, sleep_time):
     task_b1(sim_failure=sim_failure, sleep_time=sleep_time)
     return "flow b"
@@ -39,8 +45,8 @@ def flow_b(sim_failure, sleep_time):
 def wrapper_task_b(sim_failure, sleep_time):
     print("deploy run flow b")
     b = run_deployment(
-    name="flow_b/b-case-a-local-docker", parameters={
-        "sim_failure_child_flow_b": sim_failure,
+    name="flow-b/b-case-a-local-docker", parameters={
+        "sim_failure": sim_failure,
         "sleep_time": sleep_time,
         }
     )
@@ -84,7 +90,11 @@ def wrapper_task_b(sim_failure, sleep_time):
 #     )
 #     return {"a": a.state.result()}
 
-@flow
+@flow(
+    task_runner=ConcurrentTaskRunner(),
+    persist_result=True,
+    result_storage=S3Bucket.load("result-storage"),
+)
 def parent_flow_cs_a(sim_failure, sleep_time=4):
     if not sim_failure:
         sim_failure = SimulatedFailure()
