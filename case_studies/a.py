@@ -69,7 +69,8 @@ def task_t2(b, sim_failure, sleep_time=2):
 
 # first to complete - executes inside flow_a
 @task
-def task_a1():
+def task_a1(t1):
+    print(f"I depend on {t1}")
     return "task a1"
 
 # expensive task - long running - 2 days - executes inside flow_a - depends on task a1
