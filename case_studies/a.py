@@ -91,7 +91,7 @@ def task_a2(a1, sim_failure, sleep_time):
     persist_result=True,
     result_storage=S3Bucket.load("result-storage"),
 )
-def flow_a(t1, sim_failure, sleep_time):
+def flow_a(t1, sim_failure: SimulatedFailure, sleep_time):
     a1 = task_a1(t1)
     a2 = task_a2(a1, sim_failure, sleep_time)
 
