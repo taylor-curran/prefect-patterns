@@ -74,7 +74,7 @@ def task_a1():
 
 # expensive task - long running - 2 days - executes inside flow_a - depends on task a1
 @task
-def task_a2(a1, sim_failure, sleep_time=2):
+def task_a2(a1, sim_failure, sleep_time):
     time.sleep(sleep_time)
 
     if sim_failure.task_a2:
@@ -86,16 +86,17 @@ def task_a2(a1, sim_failure, sleep_time=2):
 
 
 @flow
-def flow_a(t1):
+def flow_a(t1, sim_failure, sleep_time):
     a1 = task_a1(t1)
-    a2 = task_a2(a1)
+    a2 = task_a2(a1, sim_failure, sleep_time)
 
 @task
-def wrapper_task_a(t1):
+def wrapper_task_a(t1, sim_failure, sleep_time):
     print("deploy run flow a")
     a = run_deployment(
         name="flow-a/a-case-a-local-docker", 
         parameters={
+            "t1": t1,
             "sim_failure": sim_failure,
             "sleep_time": sleep_time,
         },
@@ -114,7 +115,7 @@ def parent_flow_cs_a(sim_failure: SimulatedFailure, sleep_time: int = 4):
     b = wrapper_task_b.submit(sim_failure, sleep_time)
     t1 = task_t1.submit(sim_failure, sleep_time)
     task_t2(b, sim_failure, sleep_time=2)
-    a = wrapper_task_a(t1)
+    a = wrapper_task_a(t1, sim_failure, sleep_time)
     # t3 = t3(a)
 
 
