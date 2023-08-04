@@ -1,0 +1,96 @@
+# Welcome to your prefect.yaml file! You can you this file for storing and managing
+# configuration for deploying your flows. We recommend committing this file to source
+# control along with your flow code.
+
+# Generic metadata about this project
+name: prefect-patterns
+prefect-version: 2.10.17
+
+# build section allows you to manage and build docker images
+build:
+- prefect.deployments.steps.run_shell_script:
+    id: get-commit-hash
+    script: git rev-parse --short HEAD
+    stream_output: false
+- prefect_docker.deployments.steps.build_docker_image:
+    requires: prefect-docker>=0.3.0
+    image_name: taycurran/test-projects-june11
+    tag: '{{ get-commit-hash.stdout }}'
+    dockerfile: Dockerfile.custom
+    push: true
+
+# push section allows you to manage if and how this project is uploaded to remote locations
+push:
+
+# pull section allows you to provide instructions for cloning this project in remote locations
+pull:
+- prefect.deployments.steps.git_clone:
+    repository: https://github.com/taylor-curran/prefect-patterns.git
+    branch: main
+
+definitions:
+  tags:
+  - subflow-patterns
+  work_pool: &local_docker
+    name: local-docker
+    job_variables:
+      image: '{{ image }}'
+  build: &ecr-build-step
+  - prefect.deployments.steps.run_shell_script:
+      id: get-commit-hash
+      script: git rev-parse --short HEAD
+      stream_output: false
+  - prefect.deployments.steps.run_shell_script:
+      id: ecr-auth-step
+      script: aws ecr get-login-password --region us-east-2 | docker login --username
+        AWS --password-stdin 455346737763.dkr.ecr.us-east-2.amazonaws.com
+      stream_output: false
+  - prefect_docker.deployments.steps.build_docker_image:
+      requires: prefect-docker>=0.3.0
+      image_name: 455346737763.dkr.ecr.us-east-2.amazonaws.com/prefect-live-july
+      tag: '{{ get-commit-hash.stdout }}'
+      dockerfile: auto
+      push: true
+
+
+# the deployments section allows you to provide configuration for deploying flows
+deployments:
+- name: b-case-a-local-docker
+  version:
+  tags:
+  - docker
+  - child
+  - case
+  - case-a
+  - '{{ get-commit-hash.stdout }}'
+  description:
+  entrypoint: case_studies/a.py:flow_b
+  parameters: {}
+  work_pool: *local_docker
+  schedule:
+- name: a-case-a-local-docker
+  version:
+  tags:
+  - docker
+  - child
+  - case
+  - case-a
+  - '{{ get-commit-hash.stdout }}'
+  description:
+  entrypoint: case_studies/a.py:flow_a
+  parameters: {}
+  work_pool: *local_docker
+  schedule:
+- name: parent-case-a-local-docker
+  version:
+  tags:
+  - docker
+  - parent
+  - case
+  - case-a
+  - '{{ get-commit-hash.stdout }}'
+  description:
+  entrypoint: case_studies/a.py:parent_flow_cs_a
+  parameters: {}
+  work_pool: *local_docker
+  schedule:
