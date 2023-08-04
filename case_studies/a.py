@@ -85,7 +85,11 @@ def task_a2(a1, sim_failure, sleep_time):
         return "task a2"
 
 
-@flow
+@flow(
+    task_runner=ConcurrentTaskRunner(),
+    persist_result=True,
+    result_storage=S3Bucket.load("result-storage"),
+)
 def flow_a(t1, sim_failure, sleep_time):
     a1 = task_a1(t1)
     a2 = task_a2(a1, sim_failure, sleep_time)
