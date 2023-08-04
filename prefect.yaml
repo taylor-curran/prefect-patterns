@@ -266,8 +266,5 @@ deployments:
   description:
   entrypoint: case_studies/a.py:parent_flow_cs_a
   parameters: {}
-  work_pool:
-    name: local-docker
-    work_queue_name:
-    job_variables: {}
+  work_pool: *local_docker
   schedule:
