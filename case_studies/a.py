@@ -119,18 +119,18 @@ def parent_flow_cs_a(sim_failure: SimulatedFailure, sleep_time: int = 4):
         sim_failure = SimulatedFailure()
     b = wrapper_task_b.submit(sim_failure, sleep_time)
     t1 = task_t1.submit(sim_failure, sleep_time)
-    task_t2(b, sim_failure, sleep_time=2)
-    a = wrapper_task_a(t1, sim_failure, sleep_time)
-    t3 = task_t3(a)
+    task_t2.submit(b, sim_failure, sleep_time=2)
+    a = wrapper_task_a.submit(t1, sim_failure, sleep_time)
+    t3 = task_t3.submit(a)
 
 
 if __name__ == "__main__":
     sim_failure = SimulatedFailure(
         task_a2=False, 
-        task_b1=False, 
+        task_b1=True, 
         task_t1=False
         )
-    sleep_time = 4
+    sleep_time = 30
 
     # Call flow function
     parent_flow_cs_a(sim_failure, sleep_time=sleep_time)
