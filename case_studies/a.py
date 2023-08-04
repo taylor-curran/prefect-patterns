@@ -62,10 +62,10 @@ def task_t2(b, sim_failure, sleep_time=2):
     print(f"I depend on {b}")
     return "task t2"
 
-# @task
-# def task_t3(a):
-#     print(f"I depend on {a}")
-#     return "task t3"
+@task
+def task_t3(a):
+    print(f"I depend on {a}")
+    return "task t3"
 
 # first to complete - executes inside flow_a
 @task
@@ -121,7 +121,7 @@ def parent_flow_cs_a(sim_failure: SimulatedFailure, sleep_time: int = 4):
     t1 = task_t1.submit(sim_failure, sleep_time)
     task_t2(b, sim_failure, sleep_time=2)
     a = wrapper_task_a(t1, sim_failure, sleep_time)
-    # t3 = t3(a)
+    t3 = task_t3(a)
 
 
 if __name__ == "__main__":
