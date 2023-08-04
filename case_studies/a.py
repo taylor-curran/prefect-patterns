@@ -94,7 +94,7 @@ def flow_a(t1):
 def wrapper_task_a(t1):
     print("deploy run flow a")
     a = run_deployment(
-        name="flow_a/a-case-a-local-docker", 
+        name="flow-a/a-case-a-local-docker", 
         parameters={
             "sim_failure": sim_failure,
             "sleep_time": sleep_time,
@@ -114,7 +114,7 @@ def parent_flow_cs_a(sim_failure: SimulatedFailure, sleep_time: int = 4):
     b = wrapper_task_b.submit(sim_failure, sleep_time)
     t1 = task_t1.submit(sim_failure, sleep_time)
     task_t2(b, sim_failure, sleep_time=2)
-    # a = wrapper_task_a(t1)
+    a = wrapper_task_a(t1)
     # t3 = t3(a)
 
 
