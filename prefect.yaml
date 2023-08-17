@@ -279,8 +279,5 @@ deployments:
   description:
   entrypoint: case_studies/k.py:coros_parent_flow
   parameters: {}
-  work_pool:
-    name: local-docker
-    work_queue_name:
-    job_variables: {}
+  work_pool: *local_docker
   schedule:
