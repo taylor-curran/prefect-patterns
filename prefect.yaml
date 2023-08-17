@@ -268,3 +268,19 @@ deployments:
   parameters: {}
   work_pool: *local_docker
   schedule:
+- name: coros-case-k-local-docker
+  version:
+  tags:
+  - docker
+  - parent
+  - case
+  - case-k
+  - '{{ get-commit-hash.stdout }}'
+  description:
+  entrypoint: case_studies/k.py:coros_parent_flow
+  parameters: {}
+  work_pool:
+    name: local-docker
+    work_queue_name:
+    job_variables: {}
+  schedule:
