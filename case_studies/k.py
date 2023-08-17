@@ -2,6 +2,7 @@ from prefect import flow, task
 import asyncio
 import time
 
+
 @flow
 async def child_flow_a(data_source, sleep=4):
     time.sleep(sleep / 2)
@@ -33,7 +34,11 @@ async def task_b(sleep=2):
 
 
 @flow
-async def coros_parent_flow(data_sources: list, simulate_failure_c: bool = False, sleep: int = 4):
+async def coros_parent_flow(
+    data_sources: list = ["data_source_1", "data_source_2"],
+    simulate_failure_c: bool = False,
+    sleep: int = 4,
+):
     # -- Map-Like Concurrent Execution --
 
     coros = [child_flow_a(data_source, sleep=sleep) for data_source in data_sources]
@@ -43,7 +48,11 @@ async def coros_parent_flow(data_sources: list, simulate_failure_c: bool = False
     # -- Regular Concurrent Execution --
 
     second_round = await asyncio.gather(
-        *[child_flow_b(sleep=sleep), task_b(sleep=sleep), child_flow_c(simulate_failure=simulate_failure_c, sleep=sleep)]
+        *[
+            child_flow_b(sleep=sleep),
+            task_b(sleep=sleep),
+            child_flow_c(simulate_failure=simulate_failure_c, sleep=sleep),
+        ]
     )
 
     return {"first_round": first_round, "second_round": second_round}
@@ -52,6 +61,8 @@ async def coros_parent_flow(data_sources: list, simulate_failure_c: bool = False
 if __name__ == "__main__":
     asyncio.run(
         coros_parent_flow(
-            data_sources=["data_source_1", "data_source_2"], simulate_failure_c=True, sleep=10
+            data_sources=["data_source_1", "data_source_2"],
+            simulate_failure_c=True,
+            sleep=10,
         )
     )
